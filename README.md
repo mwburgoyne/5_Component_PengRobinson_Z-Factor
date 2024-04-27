@@ -14,4 +14,7 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 
 **Additional Resources**
 
-All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ PhazeComp software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
+All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install [Aaron Zicks’ PhazeComp](https://www.zicktech.com/phazecomp.html) software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
+
+
+
