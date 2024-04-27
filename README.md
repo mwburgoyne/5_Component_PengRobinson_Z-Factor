@@ -2,7 +2,7 @@
 
 Mark Burgoyne, 27-04-2024
 
-Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of adapting the single-component Peng-Robinson Z-Factor method to effectively incorporate inerts. This was driven by two main considerations: First, the accuracy of my original single-component model was inherently limited by the critical pressure and temperature used. Second, as we increasingly encounter scenarios such as CCUS with high inert concentrations, a simplified yet accurate approach is needed to handle up to 100% inerts.
+Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: First, the accuracy of my original single-component model was inherently limited by the choice of critical pressure and temperature correlation. Second, as we increasingly encounter scenarios such as CCUS with high inert concentrations, a simplified yet accurate approach is needed to handle up to 100% inerts - beyond the range tested with approaches such as Wichert & Aziz.
 
 **Methodology**
 
