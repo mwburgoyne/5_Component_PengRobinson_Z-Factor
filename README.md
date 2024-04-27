@@ -1,5 +1,7 @@
 **Enhancing the Peng-Robinson Z-Factor Approach for Inerts**
 
+Mark Burgoyne, 27-04-2024
+
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of adapting the single-component Peng-Robinson Z-Factor method to effectively incorporate inerts. This was driven by two main considerations: First, the accuracy of my original single-component model was inherently limited by the critical pressure and temperature used. Second, as we increasingly encounter scenarios such as CCUS with high inert concentrations, a simplified yet accurate approach is needed to handle up to 100% inerts.
 
 **Methodology**
@@ -12,4 +14,4 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 
 **Additional Resources**
 
-All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ PhazeComp software, which will run these models with the free functionality.
+All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ PhazeComp software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
