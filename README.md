@@ -1,4 +1,4 @@
-**Enhancing the Peng-Robinson Z-Factor Approach for Inerts**
+**Improving the single component Peng-Robinson Z-Factor Approach for Inerts**
 
 Mark Burgoyne, 27-04-2024
 
