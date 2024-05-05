@@ -34,9 +34,9 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 
 1. With Peng-Robinson equation of state (EOS), regress single component hydrocarbon gas critical properties to digitized Standing & Katz Z-Factor data in reduced temperature and pressure space.
 2. Regress Volume Shift for CO2, N2, and H2S, and adjusting the OmegaA and OmegaB parameters for CO2 to match NIST inerts Z-Factors. CO2 was the most challenging to model accurately, yet the approach achieved better than 1% average error and maintained less than 5% error for 99% of the data points, except near the critical point.
-3. Regress Inert:Inert temperature dependent BIP pairs to the GERG2008 mixture data, using a form as follows: `BIP = A + B / DegR`.
+3. Regress temperature dependent inert BIP pairs to GERG2008 mixture data, using a form as follows: `BIP = A + B / DegR`.
 4. Simultaneously regress (a) HC:Inert temperature and MW dependent BIP pairs and (b) Sutton critical property coefficients to the Wichert Z-Factor data, using a form as follows: `BIP = A + B / DegR + C * HC_MW`.
-5. Regress VCVIS of inerts and hydrocarbon gas at differing hydrocarbon MW’s to both the NIST data (inerts) as well as synthetic LGE viscosity data for pure hydrocarbon, while also investigating custom 3rd and 4th LBC coefficients.
+5. Regress VCVIS of all components, including hydrocarbon gas at differing hydrocarbon MW’s to both the NIST data (inerts) as well as synthetic Lee Gonzalez and Eakin viscosity data for pure hydrocarbon, while also investigating custom 3rd and 4th LBC coefficients.
 
 ## Results
 
