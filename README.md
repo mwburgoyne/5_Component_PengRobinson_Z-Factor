@@ -46,7 +46,7 @@ Version 2 of this work (5th May 2024), delivered additional functionality/accura
 | N2   | 28.014| 227.16  | 492.84    | 0.037  | -0.20976| 0.457236| 0.077796| 1.25466          |
 | Gas  | *     | *       | *         | -0.04896| -0.3949 | 0.429188| 0.069255| *                |
 
-*Properties are MW dependent*
+**Properties are MW dependent*
 
 mw_hc = Inert free hydrocarbon gas MW
 
