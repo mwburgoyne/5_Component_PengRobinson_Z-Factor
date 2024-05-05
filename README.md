@@ -50,7 +50,7 @@ Version 2 of this work (5th May 2024), delivered additional functionality/accura
 
 `Gas Tc (R) = coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
 `Gas Pc (psia) = coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
-`Gas VcVis = 0.487479 * mw_hc ** 0.053212`
+`Gas VcVis = 0.053212 * mw_hc + 0.487479`
 
 | BIP Pair Parameters: A | H2S          | N2            | Gas          |
 |------------------------|--------------|---------------|--------------|
