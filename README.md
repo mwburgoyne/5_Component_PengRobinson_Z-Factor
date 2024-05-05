@@ -48,9 +48,9 @@ Version 2 of this work (5th May 2024), delivered additional functionality/accura
 
 *Properties are MW dependent*
 
-Gas Tc (R) = `coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
-Gas Pc (psia) = `coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
-Gas VcVis = `0.487479 * mw_hc ** 0.053212`
+`Gas Tc (R) = coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
+`Gas Pc (psia) = coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
+`Gas VcVis = 0.487479 * mw_hc ** 0.053212`
 
 | BIP Pair Parameters: A | H2S          | N2            | Gas          |
 |------------------------|--------------|---------------|--------------|
@@ -70,7 +70,7 @@ Gas VcVis = `0.487479 * mw_hc ** 0.053212`
 | H2S                    |              | 0             | 5.168520E-03 |
 | N2                     |              |               | 7.717860E-02 |
 
-BIP = `A + B / DegR + C * mw_hc`
+`BIP = A + B / DegR + C * mw_hc`
 
 ## Additional Resources
 
