@@ -8,7 +8,8 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 1. The accuracy of my original single-component model was inherently limited by the choice of critical pressure and temperature correlation.
 2. As we increasingly encounter scenarios such as CCUS with high inert concentrations, a simplified yet accurate approach is needed to handle up to 100% inerts - beyond the range tested with approaches such as Wichert & Aziz.
 
-Version 1 of this work (per [LinkedIn post](https://www.linkedin.com) 27th April 2024) fitted constant BIP’s between inert and hydrocarbon pairs.  
+Original Single component PR EOS model for hydrocarbon gas in reduced temperature and pressure space (per [LinkedIn post](https://www.linkedin.com/pulse/z-factors-natural-gas-simple-eos-based-approach-mark-burgoyne-aazrc) 5th April 2024)
+Version 1 of this work (per [LinkedIn post](https://www.linkedin.com/pulse/improving-single-component-peng-robinson-z-factor-inerts-burgoyne-zfxcc) 27th April 2024) fitted constant BIP’s between inert and hydrocarbon pairs.  
 Version 2 of this work (5th May 2024), delivered additional functionality/accuracy including:
 1. All BIP pairs temperature dependent
 2. Hydrocarbon MW dependent adjustments for Hydrocarbon : Inert BIP pairs
