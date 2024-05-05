@@ -48,13 +48,12 @@ Version 2 of this work (5th May 2024), delivered additional functionality/accura
 
 **Properties are MW dependent*
 
-mw_hc = Inert free hydrocarbon gas MW
-
+mw_hc = Inert free hydrocarbon gas MW  
 `Gas Tc (R) = coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
 `Gas Pc (psia) = coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
-`Gas VcVis = 0.053212 * mw_hc + 0.487479`
-`coefic_tc = [-9.91619530e-02, 1.18144133e+01, 1.78887597e+02]`
-`coefic_pc = [-3.66048577e-03, -2.73719309e+00, 7.01192731e+02]`
+`Gas VcVis = 0.053212 * mw_hc + 0.487479`  
+`coefic_tc = [-9.91619530e-02, 1.18144133e+01, 1.78887597e+02]`  
+`coefic_pc = [-3.66048577e-03, -2.73719309e+00, 7.01192731e+02]`  
 
 
 | BIP Pair Parameters: A | H2S          | N2            | Gas          |
