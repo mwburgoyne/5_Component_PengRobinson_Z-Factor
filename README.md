@@ -90,7 +90,7 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
 |----------------------------------------------------------------------|
-| ![Relative Error Map](images/Relative Error Map.png)                 |
+| ![Relative Error Map](images/Relative_Error_Map.png)                 |
 
 
 # Pure CO2 Residual Error Plots
