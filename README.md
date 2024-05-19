@@ -86,6 +86,33 @@ mw_hc = Inert free hydrocarbon gas MW
 `H2S:N2 and CO2:N2 BIPs = A + (degF * B)/(C * degF)`  ,
 `Hydrocarbon:Inert BIPs = A + B / DegR + C * mw_hc`  
 
+# Pure CO2 Residual Error Plots
+
+| ![Cross Plot Calculated vs GERG2008 Z-Factors](images/CO2_1.png) | ![Relative Z-Factor Error](images/CO2_2.png)     |
+|------------------------------------------------------------------|--------------------------------------------------|
+| ![Relative Error Map](images/CO2_3.png)                          | ![Relative Molar Volume Error](images/CO2_4.png) |
+
+# Pure H2S Residual Error Plots
+
+| ![Cross Plot Calculated vs GERG2008 Z-Factors](images/H2S_1.png) | ![Relative Z-Factor Error](images/H2S_2.png)     |
+|------------------------------------------------------------------|--------------------------------------------------|
+| ![Relative Error Map](images/H2S_3.png)                          | ![Relative Molar Volume Error](images/H2S_4.png) |
+
+# Pure N2 Residual Error Plots
+
+| ![Cross Plot Calculated vs GERG2008 Z-Factors](images/N2_1.png) | ![Relative Z-Factor Error](images/N2_2.png)     |
+|-----------------------------------------------------------------|-------------------------------------------------|
+| ![Relative Error Map](images/N2_3.png)                          | ![Relative Molar Volume Error](images/N2_4.png) |
+
+
+# Wichert Z-Factor Residual Error Plots
+
+| ![Cross Plot Calculated vs Reported Z-Factors](images/wichert.png) | ![Relative Z-Factor Error](images/rel_wichert.png)     |
+|-----------------------------------------------------------------|-------------------------------------------------|
+| ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png)                          |
+
+
+
 ## Additional Resources
 
 All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ PhazeComp software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
