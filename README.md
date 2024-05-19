@@ -3,7 +3,7 @@
 **Author**: Mark Burgoyne  
 **First released**: 05-04-2024  
 **First Update**: 27-04-2024  
-**Second Update**: 05-05-2024
+**Second Update**: 05-05-2024  
 **Third Update**: 19-05-2024
 
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: 
