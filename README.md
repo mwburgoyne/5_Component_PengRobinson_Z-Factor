@@ -83,7 +83,7 @@ mw_hc = Inert free hydrocarbon gas MW
 | N2                     |              |               | 4.26866e-02  |
 
 `H2S:CO2 BIP = A * degF ** B`  ,
-`H2S:N2 and CO2:N2 BIPs = A + (degF * B)/(C * degF)`  ,
+`H2S:N2 and CO2:N2 BIPs = -A + (degF * B)/(C * degF)`  ,
 `Hydrocarbon:Inert BIPs = A + B / DegR + C * mw_hc`  
 
 # Pure Hydrocarbon Gas Residual Error Plots
