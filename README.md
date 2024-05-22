@@ -49,9 +49,9 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 
 | Comp | MW    | Tc (R)  | Pc (psia) | ACF     | VTRAN   | OmegaA  | OmegaB   | VcVis (ft³/lbmol)|
 |------|-------|---------|-----------|---------|---------|---------|----------|------------------|
-| CO2  | 44.01 | 547.416 | 1069.51   | 0.13888 | -0.17078| 0.440853| 0.0730166| ####             |
-| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.22294| 0.441796| 0.0739200| ####             |
-| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.20976| 0.457236| 0.077796 | ####             |
+| CO2  | 44.01 | 547.416 | 1069.51   | 0.13888 | -0.17078| 0.440853| 0.0730166| 1.32737          |
+| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.22294| 0.441796| 0.0739200| 1.40216          |
+| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.20976| 0.457236| 0.077796 | 1.26684          |
 | Gas  | *     | *       | *         | -0.04896| -0.3949 | 0.429188| 0.069255 | *                |
 
 **Properties are MW dependent*
@@ -59,32 +59,32 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 mw_hc = Inert free hydrocarbon gas MW  
 `Gas Tc (R) = coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
 `Gas Pc (psia) = coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
-`Gas VcVis (ft³/lbmol) =xxxx * mw_hc + xxxxx`  
-`coefic_tc = [xxx, xxx,  xxx]`  
-`coefic_pc = [xxx, xxx,  xxx]`  
+`Gas VcVis (ft³/lbmol) = 0.056388 * mw_hc + 0.45209`  
+`coefic_tc = [0, 7.57170e+00, 2.23931e+02]`  
+`coefic_pc = [0, -3.03213e+00, 7.06409e+02]`  
 
 
-| BIP Pair Parameters: A | H2S          | N2            | Gas          |
-|------------------------|--------------|---------------|--------------|
-| CO2                    | xxx          | xxx           | xxx          |
-| H2S                    |              | xxx           | xxx          |
-| N2                     |              |               | xxx          |
+| BIP Pair Parameters: A | H2S                             | N2              | Gas                  |
+|------------------------|---------------------------------|-----------------|----------------------|
+| CO2                    | 0.000160492(1), 0.040933216(2)  | -0.061940854    | 9.20370e-01          |
+| H2S                    |                                 | -0.836144851    | -1.92539e-02         |
+| N2                     |                                 |                 | -1.44878e+00         |
 
-| BIP Pair Parameters: B | H2S          | N2            | Gas          |
-|------------------------|--------------|---------------|--------------|
-| CO2                    | xxx          | xxx           | xxx          |
-| H2S                    |              | xxx           | xxx          |
-| N2                     |              |               | xxx          |
+| BIP Pair Parameters: B | H2S                             | N2              | Gas                  |
+|------------------------|---------------------------------|-----------------|----------------------|
+| CO2                    | 0.056787492(1), 2.454878276(2)  |-0.494913095     | 1.73109e+01          |
+| H2S                    |                                 | 2.80825315      | 5.37587e+01          |
+| N2                     |                                 |                 | 6.41055e+01          |
 
-| BIP Pair Parameters: C | H2S          | N2            | Gas          |
-|------------------------|--------------|---------------|--------------|
-| CO2                    | xxx          | xxx           | xxx          |
-| H2S                    |              | xxx           | xxx          |
-| N2                     |              |               | xxx          |
+| BIP Pair Parameters: C | H2S                             | N2              | Gas                  |
+|------------------------|---------------------------------|-----------------|----------------------|
+| CO2                    |                                 |                 | -5.07230e-02         |
+| H2S                    |                                 | 348.2693873     | 4.54109e-03          |
+| N2                     |                                 |                 | 4.77081e-02          |
 
-`H2S:CO2 BIP = max(0.09, 1/(A * degF + B))`  ,
+`H2S:CO2 BIP = max(A * degF + B (1), 1/(A * degF + B)) (2)`  ,
 `CO2:N2 BIP = 1/(A * degF + B)`  ,
-`H2S:N2 BIP = -A + (degF * B)/(C * degF)`  ,
+`H2S:N2 BIP = A + (degF * B)/(C * degF)`  ,
 `Hydrocarbon:Inert BIPs = A + B / DegR + C * mw_hc`  
 
 # Pure Hydrocarbon Gas Residual Error Plots
@@ -92,7 +92,7 @@ mw_hc = Inert free hydrocarbon gas MW
 | ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
 |----------------------------------------------------------------------|
 | ![Relative Error Map](images/Relative_Error_Map.png)                 |
-|----------------------------------------------------------------------|
+
 
 
 # Pure CO2 Residual Error Plots
@@ -116,9 +116,9 @@ mw_hc = Inert free hydrocarbon gas MW
 
 # Wichert Z-Factor Residual Error Plots
 
-| ![Cross Plot Calculated vs Reported Z-Factors](images/wichert.png) | ![Relative Z-Factor Error](images/rel_wichert.png)     |
+| ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
 |-----------------------------------------------------------------|-------------------------------------------------|
-| ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
+| ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
 
 ## Additional Resources
