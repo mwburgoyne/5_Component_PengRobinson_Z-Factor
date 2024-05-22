@@ -92,6 +92,7 @@ mw_hc = Inert free hydrocarbon gas MW
 | ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
 |----------------------------------------------------------------------|
 | ![Relative Error Map](images/Relative_Error_Map.png)                 |
+|----------------------------------------------------------------------|
 
 
 # Pure CO2 Residual Error Plots
@@ -117,8 +118,7 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | ![Cross Plot Calculated vs Reported Z-Factors](images/wichert.png) | ![Relative Z-Factor Error](images/rel_wichert.png)     |
 |-----------------------------------------------------------------|-------------------------------------------------|
-| ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png)                          |
-
+| ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
 
 ## Additional Resources
