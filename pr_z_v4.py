@@ -89,6 +89,8 @@ def peng_robinson_z(degf, psia, sg, co2 = 0, h2s = 0, n2 = 0):
         sg_hc = (sg - (co2 * mws[0] + h2s * mws[1] + n2 * mws[2]) / mwAir) / (1 - co2 - h2s - n2)
     else:
         sg_hc = 0.75 # Irrelevant, since hydrocarbon fraction = 0
+    sg_hc = max(sg_hc, 0.553779772) # Methane is lower limit
+    
     tcs[-1], pcs[-1] = tc_pc(sg_hc) # Hydrocarbon Tc and Pc from SG using Modified Sutton correlation
     trs = degR / tcs
     prs = psia / pcs
@@ -119,6 +121,8 @@ def lbc(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0):
         sg_hc = (sg - (co2 * mws[0] + h2s * mws[1] + n2 * mws[2]) / mwAir) / (1 - co2 - h2s - n2)
     else:
         sg_hc = 0.75 # Irrelevant, since hydrocarbon fraction = 0
+    
+    sg_hc = max(sg_hc, 0.553779772) # Methane is lower limit
     
     hc_gas_mw = sg_hc * mwAir
         
