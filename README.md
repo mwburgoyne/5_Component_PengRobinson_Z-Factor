@@ -19,8 +19,8 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
   3. Implemented LBC viscosity calculations, tuned for up to 100% mole fraction of natural gas or inerts
 - Third update of this work (19th May 2024, with current GitHub content), delivered additional functionality/accuracy including:
   1. Refitted all inert critical properties to GERG2008, including efforts to minimize OmegaA/B deviations from default for CO2
-  2. Refitted inert temperature dependant pairs to GERG2008 data (previoulsy used noisy Wichert data)
-  3. Updated all knock-on coefficients and dependancies
+  2. Refitted inert temperature dependant pairs to GERG2008 data (previously used noisy Wichert data)
+  3. Updated all knock-on coefficients and dependancies, and added a few non-Wichert data points at elevated temperature and gas richness.
 
 ## Data Sources used
 
@@ -49,9 +49,9 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 
 | Comp | MW    | Tc (R)  | Pc (psia) | ACF     | VTRAN   | OmegaA  | OmegaB   | VcVis (ft³/lbmol)|
 |------|-------|---------|-----------|---------|---------|---------|----------|------------------|
-| CO2  | 44.01 | 547.416 | 1069.51   | 0.13888 | -0.17078| 0.440853| 0.0730166| 1.32848          |
-| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.22294| 0.441796| 0.0739200| 1.38097          |
-| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.20976| 0.457236| 0.0777961| 1.25015          |
+| CO2  | 44.01 | 547.416 | 1069.51   | 0.13888 | -0.17078| 0.440853| 0.0730166| 1.47133          |
+| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.22294| 0.441796| 0.0739200| 1.53276          |
+| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.20976| 0.457236| 0.0777961| 1.37901          |
 | Gas  | *     | *       | *         | -0.04896| -0.3949 | 0.429188| 0.069255 | *                |
 
 **Properties are MW dependent*
@@ -59,28 +59,30 @@ Following feedback from Curtis Whitson and Simon Tortike, I explored the potenti
 mw_hc = Inert free hydrocarbon gas MW  
 `Gas Tc (R) = coefic_tc[0] * mw_hc ** 2 + coefic_tc[1] * mw_hc + coefic_tc[2]`  
 `Gas Pc (psia) = coefic_pc[0] * mw_hc ** 2 + coefic_pc[1] * mw_hc + coefic_pc[2]`  
-`Gas VcVis (ft³/lbmol) = 0.056388 * mw_hc + 0.45209`  
-`coefic_tc = [0, 7.71512, 220.647]`  
-`coefic_pc = [0, -3.04378, 708.398]`  
+`Gas VcVis (ft³/lbmol) = 0.066371826 * mw_hc + 0.35317119`  
+`coefic_tc = [0, 8.26506, 211.364]`  
+`coefic_pc = [0, -2.76138, 705.295]`  
+`LBC P3 = -3.98866e-02`  
+`LBC P4 = 9.26531e-03`  
 
 
 | BIP Pair Parameters: A | H2S                             | N2              | Gas                  |
 |------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    | 0.000160492(a), 0.040933216(b)  | -0.061940854    | 9.92954e-01          |
-| H2S                    |                                 | -0.836144851    | -1.39242e-01         |
+| CO2                    | 0.000160492(a), 0.040933216(b)  | -0.061940854    | 2.58604e-01          |
+| H2S                    |                                 | -0.836144851    | -7.22523e-02         |
 | N2                     |                                 |                 | -1.44878e+00         |
 
 | BIP Pair Parameters: B | H2S                             | N2              | Gas                  |
 |------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    | 0.056787492(a), 2.454878276(b)  |-0.494913095     | -7.72820e+01          |
-| H2S                    |                                 | 2.80825315      | 8.55659e+01          |
-| N2                     |                                 |                 | 1.49914e+02          |
+| CO2                    | 0.056787492(a), 2.454878276(b)  |-0.494913095     | 7.33735              |
+| H2S                    |                                 | 2.80825315      | 70.7683              |
+| N2                     |                                 |                 | 453.317              |
 
 | BIP Pair Parameters: C | H2S                             | N2              | Gas                  |
 |------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    |                                 |                 | -4.65493e-02         |
-| H2S                    |                                 | 348.2693873     | 6.66862e-03          |
-| N2                     |                                 |                 | 4.23935e-02          |
+| CO2                    |                                 |                 | -1.31205e-02         |
+| H2S                    |                                 | 348.2693873     | 4.18843e-03          |
+| N2                     |                                 |                 | 2.06268e-02          |
 
 `H2S:CO2 BIP = max(A * degF + B (a), 1/(A * degF + B)) (b)`  ,
 `CO2:N2 BIP = 1/(A * degF + B)`  ,
@@ -92,6 +94,7 @@ mw_hc = Inert free hydrocarbon gas MW
 | ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
 |----------------------------------------------------------------------|
 | ![Relative Error Map](images/Relative_Error_Map.png)                 |
+[Uploading Inerts_PR_Match_VSHIFT_Only_AB_CO2_BigLoop_BIPS_Temp_reduced_MW_Slope4_Linear_v3.phz…]()
 
 
 
@@ -118,7 +121,7 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
 |----------------------------------------------------------------------------------------------------------|
-| **Peng Robinson Avg Rel. Error:** -0.001, **Max rel. Error:** 0.052, **95% of rel. errors < :** 0.0205 <br> **DAK + Sutton & Wichert Avg Rel. Error:** 0.007, **Max rel. Error:** 0.097, **95% of rel. errors < :** 0.0336 <br> **DAK + PMC Avg Rel. Error:** 0.004, **Max rel. Error:** 0.157, **95% of rel. errors < :** 0.0349 |
+| **Peng Robinson Avg Rel. Error:** -0.001, **Max rel. Error:** 0.08, **95% of rel. errors < :** 0.0205 <br> **DAK + Sutton & Wichert Avg Rel. Error:** 0.009, **Max rel. Error:** 0.13, **95% of rel. errors < :** 0.0398 <br> **DAK + PMC Avg Rel. Error:** 0.005, **Max rel. Error:** 0.157, **95% of rel. errors < :** 0.0358 |
 | ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
 
