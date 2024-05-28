@@ -119,7 +119,12 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
 |----------------------------------------------------------------------------------------------------------|
-| **Peng Robinson Avg Rel. Error:** -0.001, **Max rel. Error:** 0.051, **95% of rel. errors < :** 0.0208 <br> **DAK + Sutton & Wichert Avg Rel. Error:** 0.009, **Max rel. Error:** 0.097, **95% of rel. errors < :** 0.0398 <br> **DAK + PMC Avg Rel. Error:** 0.005, **Max rel. Error:** 0.157, **95% of rel. errors < :** 0.0356 |
+| | Method                        | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
+|-------------------------------|----------------|----------------|----------------------|
+| Peng Robinson                 | -0.001         | 0.051          | 0.0208               |
+| DAK + Sutton & Wichert        | 0.009          | 0.097          | 0.0398               |
+| DAK + PMC                     | 0.005          | 0.157          | 0.0356               |
+|
 | ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
 
