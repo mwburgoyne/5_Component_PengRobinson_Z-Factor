@@ -118,13 +118,14 @@ mw_hc = Inert free hydrocarbon gas MW
 # Wichert Z-Factor Residual Error Plots
 
 | ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
-|----------------------------------------------------------------------------------------------------------|
-| | Method                        | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
+
+| Method                        | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |-------------------------------|----------------|----------------|----------------------|
 | Peng Robinson                 | -0.001         | 0.051          | 0.0208               |
 | DAK + Sutton & Wichert        | 0.009          | 0.097          | 0.0398               |
 | DAK + PMC                     | 0.005          | 0.157          | 0.0356               |
-|
+
+
 | ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
 
