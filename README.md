@@ -128,6 +128,10 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
 
+# Wichert + Synthetic GERG (at higher richness) Z-Factor Residual Error Plots
+
+| ![Cross Plot Calculated vs Wichert & GERG2008 Z-Factors to higher richness](images/Crossplot_Z-PR_GERG&Wichert.png)      |
+
 | Method                        | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |-------------------------------|----------------|----------------|----------------------|
 | Peng Robinson                 | 0.001          | 0.074          | 0.0277               |
