@@ -124,19 +124,27 @@ mw_hc = Inert free hydrocarbon gas MW
 | ![Relative Error Map](images/N2_3.png)                          | ![Relative Molar Volume Error](images/N2_4.png) |
 
 
-# Wichert Z-Factor Residual Error Plots
+# Wichert Z-Factor Cross Plots
 
-| ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png)      |
+| ![Cross Plot Calculated vs Reported Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK.png) | ![Cross Plot Calculated vs Wichert & GERG2008 Z-Factors to higher richness](images/Crossplot_Z-PR_GERG&Wichert.png)    |
+|-----------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| ![Cross Plot Calculated vs Wichert & Extended GERG Z-Factors & comparison with DAK](images/Crossplot_Z-PR_DAK_extended.png)                         |   |
 
-# Wichert + Synthetic GERG (at higher richness) Z-Factor Residual Error Plots
 
-| ![Cross Plot Calculated vs Wichert & GERG2008 Z-Factors to higher richness](images/Crossplot_Z-PR_GERG&Wichert.png)      |
 
-| Method                        | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
+
+| Method (vs Wichert data only) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |-------------------------------|----------------|----------------|----------------------|
-| Peng Robinson                 | 0.001          | 0.074          | 0.0277               |
-| DAK + Sutton & Wichert        | 0.003          | 0.359          | 0.0618               |
-| DAK + PMC                     | 0.024          | 0.651          | 0.122                |
+| Peng Robinson                 | 0.002          | 0.074          | 0.0321               |
+| DAK + Sutton & Wichert        | 0.007          | 0.097          | 0.0336               |
+| DAK + PMC                     | 0.004          | 0.157          | 0.0349               |
+
+| Method (vs Wichert & GERG data) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
+|---------------------------------|----------------|----------------|----------------------|
+| Peng Robinson                   | 0.001          | 0.074          | 0.0277               |
+| DAK + Sutton & Wichert          | 0.003          | 0.359          | 0.0618               |
+| DAK + PMC                       | 0.024          | 0.651          | 0.122                |
+
 
 | ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
 
