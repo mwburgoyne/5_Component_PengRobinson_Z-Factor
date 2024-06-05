@@ -4,11 +4,13 @@
 **First released**: 05-04-2024  
 **First Update**: 27-04-2024  
 **Second Update**: 05-05-2024  
-**Third Update**: 30-05-2024
+**Third Update**: 05-06-2024
 
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: 
 1. The accuracy of my original single-component model was inherently limited by the choice of critical pressure and temperature correlation.
 2. As we increasingly encounter scenarios such as CCUS with high inert concentrations, a simplified yet accurate approach is needed to handle up to 100% inerts - beyond the range tested with approaches such as Wichert & Aziz.
+
+This new approach (a) delivers Z-Factor accuracy as good or better than DAK with either Sutton (with Wichert & Aziz) or Piper, McCain & Corredor critical properties in low richness gas, (b) substantially better accuracy in high richness gas, (c) seamlessly extends to scenarios with up to 100% CO2, H2S or N2, (d) paired tuned viscosity calculations using LBC and (e) all in a non-iterative solution scheme, requiring only solving of the roots to a cubic equation. 
 
 ## Evolution of work
 - Original Single component PR EOS model for hydrocarbon gas in reduced temperature and pressure space (per [Linkedin post 5th April 2024](https://www.linkedin.com/pulse/z-factors-natural-gas-simple-eos-based-approach-mark-burgoyne-aazrc))
