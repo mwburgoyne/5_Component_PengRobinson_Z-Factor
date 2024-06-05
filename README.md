@@ -19,10 +19,11 @@ This new approach (a) delivers Z-Factor accuracy as good or better than DAK with
   1. All BIP pairs temperature dependent
   2. Hydrocarbon MW dependent adjustments for Hydrocarbon : Inert BIP pairs
   3. Implemented LBC viscosity calculations, tuned for up to 100% mole fraction of natural gas or inerts
-- Third update of this work (19th May 2024, with current GitHub content), delivered additional functionality/accuracy including:
-  1. Refitted all inert critical properties to GERG2008, including efforts to minimize OmegaA/B deviations from default for CO2
-  2. Refitted inert temperature dependant pairs to GERG2008 data (previously used noisy Wichert data)
-  3. Updated all knock-on coefficients and dependancies. Augmented data to fit against with four synthetic gas samples at various richnesses and inert fractions using the GERG2008 EOS.
+- Third update of this work (19th May - 5th June 2024, with current GitHub content), delivered additional functionality/accuracy including:
+  1. Reverted to a single component gas EOS fit that avoided changing Omega values
+  2. Refitted all inert critical properties to GERG2008, including efforts to minimize OmegaA/B deviations from default for CO2
+  3. Refitted inert temperature dependant pairs to GERG2008 data (previously used noisy Wichert data)
+  4. Updated all knock-on coefficients and dependancies. Augmented data to fit against with four synthetic gas samples at various richnesses and inert fractions using the GERG2008 EOS.
 
 ## Data Sources used
 
