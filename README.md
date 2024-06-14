@@ -4,8 +4,7 @@
 **First released**: 05-04-2024  
 **First Update**: 27-04-2024  
 **Second Update**: 05-05-2024  
-**Third Update**: 19-05-2024 -> 05-06-2024
-
+**Third Update**: 19-05-2024 -> 05-06-2024  
 **Fourth Update**: 15-06-2024
 
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: 
@@ -57,11 +56,15 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 ## Steps
 
-1. With Peng-Robinson equation of state (EOS), regress single component hydrocarbon gas critical properties to digitized Standing & Katz Z-Factor data in reduced temperature and pressure space.
-2. Regress Volume Shift for CO2, N2, and H2S, and adjusting the OmegaA and OmegaB parameters for CO2 to match GERG2008 inerts Z-Factors. CO2 was the most challenging to model accurately, yet the approach achieved better than 1% average error and maintained less than 5% error for 99% of the data points, except near the critical point.
-3. Regress temperature dependent inert BIP pairs to GERG2008 mixture data.
-4. Simultaneously regress (a) HC:Inert temperature and MW dependent BIP pairs and (b) Sutton critical property coefficients to the Wichert and synthetic GERG Z-Factor data.
-5. Regress VCVIS of all components, including hydrocarbon gas at differing hydrocarbon MW’s to both the GERG2008 data (inerts) as well as synthetic Lee Gonzalez and Eakin viscosity data for pure hydrocarbon, while also investigating custom 3rd and 4th LBC coefficients.
+1.	From digitized Standing & Katz plot, using PR & Peneloupe EOS, fit a single component ‘Gas’ model to reduced pressure and temperature data by regressing on ACF, VTRANS OmegA and OmegaB
+2.	With data generated from GERG2008 EOS, regress on critical parameters for pure CO2, H2S, N2 and H2. 
+  a.	Changing ACF, VTRAN, OmegaA and OmegaB for CO2
+  b.	VTRAN, OmegaA and OmegaB for H2S
+  c.	VTRAN only for N2 and H2
+3.	Create data with GERG2008 of synthetic 25%, 50% and 75% binary mixtures of inerts over a range of pressures and temperatures, fitting BIP’s as a function of temperature for each pair.
+4.	Using (a) real data published by Wichert, augmented with (b) synthetic GERG2008 data to anchor scenarios with elevated hydrocarbon MW, regress on (i) hydrocarbon gas : inert BIP’s as a function of temperature and hydrocarbon MW and (ii) Tc and Pc behaviour as a function of hydrocarbon gas MW to match Z-Factors
+5.	Tune VCVIS and LBC coefficients to match single component inert viscosity (from NIST) and Lee Gonzalez & Eakin viscosity for pure hydrocarbon gas.
+
 
 ## Results
 
@@ -69,9 +72,10 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 | Comp | MW    | Tc (R)  | Pc (psia) | ACF     | VTRAN   | OmegaA  | OmegaB   | VcVis (ft³/lbmol)|
 |------|-------|---------|-----------|---------|---------|---------|----------|------------------|
-| CO2  | 44.01 | 547.416 | 1069.51   | 0.13888 | -0.17078| 0.440853| 0.0730166| 1.49254          |
-| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.22294| 0.441796| 0.0739200| 1.55582          |
-| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.20976| 0.457236| 0.0777961| 1.40419          |
+| CO2  | 44.01 | 547.416 | 1069.51   | 0.10560 | -0.19240| 0.440853| 0.0730166| 1.55342          |
+| H2S  | 34.082| 672.12  | 1299.97   | 0.01839 | -0.18906| 0.441796| 0.0739200| 1.57142          |
+| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.21067| 0.457236| 0.0777961| 1.41785          |
+| H2   |  2.016|  59.364 | 187.53    | -0.2170 | -0.12899| 0.457236| 0.0777961| 1.18168          |
 | Gas  | *     | *       | *         | -0.04051| -0.19185| 0.457236| 0.0777961| *                |
 
 **Properties are MW dependent*
@@ -79,38 +83,46 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | Variable   | Tc             | Pc              |
 |------------|----------------|-----------------|
-| A          | 4.37303        |   -2.36286      |
-| B          | 49.6062        | 1153.92         |
-| C          |  0.00126240593 | 0.000686956691  |
-| D          |  0.333600083   |    1.69866602   |
+| A          | 4.76601        |   -1.18331      |
+| B          | 45.4709        | 1104.13         |
+| C          |  0.00244823    | 0.00702049875   |
+| D          |  0.3219414605  |    1.50107866   |
 
 `Gas Tc (R) = (A * mw_hc + B)/(C * mw_hc + D)`  
 `Gas Pc (psia) = (A * mw_hc + B)/(C * mw_hc + D)`  
-`Gas VcVis (ft³/lbmol) = 0.064704349 * mw_hc + 0.416846`  
-`LBC P3, P4 = -3.99829e-02, 9.29543e-03`  
+`Gas VcVis (ft³/lbmol) = 0.070294775 * mw_hc + 0.333582429`  
+`LBC P3, P4 = -4.01411e-02, 9.00617e-03`  
 
 
-| BIP Pair Parameters: A | H2S                             | N2              | Gas                  |
-|------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    | 0.000160492(a), 0.040933216(b)  | -0.061940854    | 0.385078             |
-| H2S                    |                                 | -0.836144851    | 0.279239             |
-| N2                     |                                 |                 | 0.342281             |
+| BIP Pair Parameters: A | H2S                             | N2                     | H2                   |Gas                  |
+|------------------------|---------------------------------|------------------------|----------------------|---------------------|
+| CO2                    | -0.000811630909090909           | -0.00112389            | -3.949E-05           | 0.356872            |
+| H2S                    |                                 | 0.00113879071428571    | 0.00377893           | 0.13333             |
+| N2                     |                                 |                        | 0.000227832857142857 | -0.0429868          |
+| H2                     |                                 |                        |                      | 0.712742            |
 
-| BIP Pair Parameters: B | H2S                             | N2              | Gas                  |
-|------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    | 0.056787492(a), 2.454878276(b)  |-0.494913095     | -163.317             |
-| H2S                    |                                 | 2.80825315      | -82.1543             |
-| N2                     |                                 |                 | -202.531             |
+| BIP Pair Parameters: B | H2S                             | N2                     | H2                   |Gas                  |
+|------------------------|---------------------------------|------------------------|----------------------|---------------------|
+| CO2                    | 0.244400581818182               | -0.1389305             | 0.661337             | -179.465            |
+| H2S                    |                                 | 0.251688807142857      | 0.5633018            | -24.7713            |
+| N2                     |                                 |                        | 0.199822661904762    | -3.39882            |
+| H2                     |                                 |                        |                      | -349.25             |
 
-| BIP Pair Parameters: C | H2S                             | N2              | Gas                  |
-|------------------------|---------------------------------|-----------------|----------------------|
-| CO2                    |                                 |                 | -0.00152913          |
-| H2S                    |                                 | 348.2693873     | -0.00391989          |
-| N2                     |                                 |                 | -0.000400542         |
+| BIP Pair Parameters: C | H2S                             | N2                     | H2                   |Gas                  |
+|------------------------|---------------------------------|------------------------|----------------------|---------------------|
+| CO2                    | 0.000199935714285714            | 0.000648015753811406   | 0.00116141530208922  | -0.00128858         |
+| H2S                    |                                 | 0.00193186545454545    | 0.00119598402597403  | -0.00141921         |
+| N2                     |                                 |                        | 0.000141143636363636 | 0.000728009         |
+| H2                     |                                 |                        |                      | 0.00110919          |
 
-`H2S:CO2 BIP = max(A * degF + B (a), 1/(A * degF + B)) (b)`  ,
-`CO2:N2 BIP = 1/(A * degF + B)`  ,
-`H2S:N2 BIP = A + (degF * B)/(C * degF)`  ,
+| BIP Pair Parameters: D | H2S                             | N2                     | H2                   | 
+|------------------------|---------------------------------|------------------------|----------------------| 
+| CO2                    | 0.0843990523809524              | -0.294767026538679     | 0.530504334274421    | 
+| H2S                    |                                 | 0.0794874545454544     | 0.831735004329004    | 
+| N2                     |                                 |                        | 0.216575909090909    | 
+
+`H2S:CO2, CO2:N2, H2S:N2, CO2:H2 BIPs = max((A * degF + B),(C * degF + D))`  ,
+`H2S:H2, N2:H2 BIPs = min((A * degF + B),(C * degF + D))`  ,
 `Hydrocarbon:Inert BIPs = A + B / DegR + C * mw_hc`  
 
 # Pure Hydrocarbon Gas Residual Error Plots
