@@ -79,6 +79,7 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 | Gas  | *     | *       | *         | -0.04051| -0.19185| 0.457236| 0.0777961| *                |
 
 **Properties are MW dependent*
+
 mw_hc = Inert free hydrocarbon gas MW  
 
 | Variable   | Tc             | Pc              |
@@ -130,8 +131,6 @@ mw_hc = Inert free hydrocarbon gas MW
 | ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
 |----------------------------------------------------------------------|
 | ![Relative Error Map](images/Relative_Error_Map.png)                 |
-[Uploading Inerts_PR_Match_VSHIFT_Only_AB_CO2_BigLoop_BIPS_Temp_reduced_MW_Slope4_Linear_v3.phz…]()
-
 
 
 # Pure CO2 Residual Error Plots
