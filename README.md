@@ -91,32 +91,19 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 | C          | -0.00255420923604081 | -0.0185900487322924  |
 
 mw_hc = Inert free hydrocarbon gas MW
+
 `Gas Tc (R) = (A * mw_hc + B)/(C * mw_hc + 1)`  
 `Gas Pc (psia) = (A * mw_hc + B)/(C * mw_hc + 1)`  
 `Gas VcVis (ft³/lbmol) = 0.069352858 * mw_hc + 0.360081275`  
 `LBC P3, P4 = -4.05460e-02, 9.03791e-03`  
 
 
-| BIP Pair Parameters: A | Hydrocarbon Gas      |
-|------------------------|----------------------|
-| CO2                    |  0.404192            |
-| H2S                    |  0.269304            |
-| N2                     |  0.637898            |
-| H2                     |  1.03807             |
-
-| BIP Pair Parameters: B | Hydrocarbon Gas      |
-|------------------------|----------------------|
-| CO2                    |  -0.000187046        |
-| H2S                    |  -0.00192917         |
-| N2                     |   0.000520885        |
-| H2                     |   0.00644143         |
-
-| BIP Pair Parameters: C | Hydrocarbon Gas      |
-|------------------------|----------------------|
-| CO2                    |  -179.429            |
-| H2S                    |  - 73.9024           |
-| N2                     |  -338.142            |
-| H2                     |  -547.057            |
+| Gas:Inert BIP Parameters | A             |  B           |   C        |
+|--------------------------|---------------|--------------|------------|
+| CO2                      |  0.404192     | -0.000187046 |  -179.429  |
+| H2S                      |  0.269304     | -0.00192917  |  - 73.9024 |
+| N2                       |  0.637898     |  0.000520885 |  -338.142  |
+| H2                       |  1.03807      |  0.00644143  |  -547.057  |
 
 `Hydrocarbon:Inert BIPs = A + B * mw_hc + C / DegR`  
 
@@ -128,8 +115,6 @@ mw_hc = Inert free hydrocarbon gas MW
 
 # Pure Hydrocarbon Gas Residual Error Plots
 
-| ![Calculated vs Standing & Katz Z-Factors](images/z-factors_S&K.png) |
-|----------------------------------------------------------------------|
 | ![Relative Error Map](images/S&K_Rel_Error_vs_PR.png)                 |
 
 
