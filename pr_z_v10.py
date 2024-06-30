@@ -40,8 +40,8 @@ R, mwAir, degF2R = 10.731577089016, 28.97, 459.67
 
 # Custom Tc and Pc
 def tc_pc(sg_hc):
-    coefic_pc = [-12.5947509069345, 674.43839507741, -0.0181894714107948]
-    coefic_tc = [9.13491951851073, 184.496958075292, -0.00217332267132575]
+    coefic_pc = [-6.73575510993499, 695.511616975236, -0.00743650263407624]
+    coefic_tc = [13.7273696828121, 151.038843250937, 0.00513531981647805]
     mw_gas = mwAir * sg_hc
     ppc_hc = (coefic_pc[0] * mw_gas + coefic_pc[1])/(coefic_pc[2] * mw_gas + 1)
     tpc_hc = (coefic_tc[0] * mw_gas + coefic_tc[1])/(coefic_tc[2] * mw_gas + 1)
@@ -57,22 +57,21 @@ OmegaA = np.array([0.427705, 0.436743, 0.457236, 0.457236, 0.457236])
 OmegaB = np.array([0.0696460, 0.0724373, 0.0777961, 0.0777961, 0.0777961]) 
 VCVIS = np.array([1.43515, 1.45013, 1.33541, 0.75784, 0]) # cuft/lbmol    
 
-
 def calc_bips(hc_mw, degf):                                                                     
     degR = degf + degF2R  
 
     # Hydrocarbon-Inert BIPS (Regressed to Wichert & Synthetic GERG Data)
     # BIP = intcpt + degR_slope/degR + mw_slope * hc_mw
     #                      CO2      H2S        N2        H2 
-    intcpts = np.array([0.40374, 0.25474, 0.570767, 0.896021])
-    mw_slopes = np.array([-0.000736115, -0.00226534, -0.000625088, 0.013901])
-    degR_slopes = np.array([-178.455, -64.6867, -291.029, -553.062])
+    intcpts = np.array([0.409418, 0.291823, 0.536424, 0.834292])
+    mw_slopes = np.array([-0.00273458, -0.00431657, -0.00426472, 0.00917456])
+    degR_slopes = np.array([-161.629, -66.7038, -235.879, -484.826])
 
     hc_bips = list(intcpts + degR_slopes/degR + mw_slopes * hc_mw)
     
     # Inert:Inert BIP Pairs
-    #            CO2:H2S   CO2:N2   H2S:N2  CO2:H2  H2S:H2  N2:H2
-    inert_bips = [0.0570487, -0.220804, -0.237397, 0.646996, 0.65, 0.36917]
+    #            CO2:H2S       CO2:N2     H2S:N2    CO2:H2  H2S:H2  N2:H2
+    inert_bips = [0.0565491, -0.204689, -0.216264, 0.648104, 0.65, 0.36917]
     bips = np.array(hc_bips + inert_bips)
     bip_pairs = [(0, 4), (1, 4), (2, 4), (3, 4), (0, 1), (0, 2), (1, 2), (0, 3), (1, 3), (2, 3)]  
     bip_matrix = np.zeros((5, 5))
@@ -135,7 +134,7 @@ def lbc(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2 = 0.0):
         
     def vcvis_hc(mw): # Returns hydrocarbon gas VcVis for LBC viscosity calculations   
         return  0.057541406 * mw + 0.474103636 # ft3/lbmol         
-                            
+                                                                   
     mws[-1]  = hc_gas_mw
     tcs[-1], pcs[-1] = tc_pc(hc_gas_mw/mwAir)
     VCVIS[-1] = vcvis_hc(hc_gas_mw)
@@ -160,7 +159,7 @@ def lbc(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2 = 0.0):
         sqrt_mws = np.sqrt(mws)
         return np.sum(zi * ui * sqrt_mws)/np.sum(zi * sqrt_mws)
 
-    a = [0.1023, 0.023364, 0.058533, -3.88199e-02, 9.14290e-03] # P3 and P4 have been modified
+    a = [0.1023, 0.023364, 0.058533, -3.88199e-02,  9.14290e-03] # P3 and P4 have been modified
     # Calculate the viscosity of the mixture using the Lorenz-Bray-Clark method.
     rhoc = 1/np.sum(VCVIS*zi)
     Tc = tcs * 5/9    # (deg K)
