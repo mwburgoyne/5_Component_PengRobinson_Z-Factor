@@ -87,9 +87,9 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 | Variable   | Tc                   | Pc                   |
 |------------|----------------------|----------------------|
-| A          | 9.13491951851073     |   -12.5947509069345  |
-| B          | 184.496958075292     |   674.43839507741    |
-| C          | -0.00217332267132575 | -0.0181894714107948  |
+| A          | 13.7273696828121     |   -6.73575510993499  |
+| B          | 151.038843250937     |   695.511616975236   |
+| C          | 0.00513531981647805  | -0.00743650263407624 |
     
 mw_hc = Inert free hydrocarbon gas MW
 
@@ -101,18 +101,18 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | Gas:Inert BIP Parameters | A             |  B           |   C        |
 |--------------------------|---------------|--------------|------------|
-| CO2                      |  0.40374      | -0.000736115 |  -178.455  |
-| H2S                      |  0.25474      | -0.00226534  |  -64.6867  |
-| N2                       |  0.570767     | -0.000625088 |  -291.029  |
-| H2                       |  0.896021     |  0.013901    |  -553.062  |
+| CO2                      |  0.409418     | -0.00273458  |  -161.629  |
+| H2S                      |  0.291823     | -0.00431657  |  -66.7038  |
+| N2                       |  0.536424     | -0.00426472  |  -235.879  |
+| H2                       |  0.834292     |  0.00917456  |  -484.826  |
 
 `Hydrocarbon:Inert BIPs = A + B * mw_hc + C / DegR`  
     
 | BIP Pair Values  |  CO2   |  H2S   |  N2    | 
 |------------------|--------|--------|--------|
-| H2S              | 0.05705|        |        | 
-| N2               |-0.22080|-0.23740|        | 
-| H2               | 0.64700| 0.65000| 0.36917| 
+| H2S              | 0.05655|        |        | 
+| N2               |-0.20469|-0.21630|        | 
+| H2               | 0.64810| 0.65000| 0.36917| 
 
 # Pure Hydrocarbon Gas Residual Error Plots
 
@@ -148,15 +148,15 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | Method (vs Wichert data only) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |-------------------------------|----------------|----------------|----------------------|
-| Peng Robinson                 | -0.003         | 0.056          | 0.0264               |
+| Peng Robinson                 | -0.003         | 0.050          | 0.0232               |
 | DAK + Sutton & Wichert        | 0.007          | 0.097          | 0.0336               |
 | DAK + PMC                     | 0.004          | 0.157          | 0.0349               |
 
 | Method (vs Wichert & GERG data) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |---------------------------------|----------------|----------------|----------------------|
-| Peng Robinson                   | -0.001         | 0.084          | 0.0286               |
-| DAK + Sutton & Wichert          | 0.005          | 0.431          | 0.1003               |
-| DAK + PMC                       | 0.033          | 0.654          | 0.1432               |
+| Peng Robinson                   | -0.001         | 0.077          | 0.0267               |
+| DAK + Sutton & Wichert          | 0.004          | 0.431          | 0.0999               |
+| DAK + PMC                       | 0.032          | 0.654          | 0.1427               |
 
 
 | ![Relative Z-Factor Error](images/rel_wichert.png) | ![Wichert Data Correlation Matrix for inputs and residual relative error](images/corel_wichert.png) |
@@ -164,4 +164,4 @@ mw_hc = Inert free hydrocarbon gas MW
 
 ## Additional Resources
 
-All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ PhazeComp software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
+All the datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks’ [PhazeComp](https://www.zicktech.com/phazecomp.html) software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
