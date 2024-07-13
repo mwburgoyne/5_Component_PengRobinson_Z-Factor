@@ -96,8 +96,8 @@ mw_hc = Inert free hydrocarbon gas MW
 
 `Gas Tc (R) = A * (mw_hc + C) /(B + mw_hc + C)`  
 `Gas Pc (psia) = 0.3074 * R * Tc / (A * mw_hc**2 + B * mw_hc + C),  where R = 10.7316`  
-`Gas VcVis (ft³/lbmol) = 0.057541406 * mw_hc + 0.474103636`  
-`LBC P3, P4 = -3.88199e-02, 9.14290e-03`  
+`Gas VcVis (ft³/lbmol) = 0.057687137 * mw_hc + 0.481279091`  
+`LBC P3, P4 = -3.88277e-02,  9.14211e-03`  
 
 
 | Gas:Inert BIP Parameters | A             |  B           |   C        |
