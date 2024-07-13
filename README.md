@@ -7,7 +7,7 @@
 **Third Update**: 19-05-2024 -> 05-06-2024  
 **Fourth Update**: 15-06-2024  
 **Fifth Update**: 14-07-2024
-
+ 
 
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: 
 1. The accuracy of my original single-component model was inherently limited by the choice of critical pressure and temperature correlation.
