@@ -54,7 +54,7 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 ## Data Sources used
 
 - **Standing & Katz Z-Factors for pure hydrocarbon gas**
-  - Appendix A, Table A-2 of Handbook of Natural Gas Engineering, Katz et al.  
+  - 5,940 Z-Factor data points from Appendix A, Table A-2 of Handbook of Natural Gas Engineering, Katz et al.  
 - **Pure inert critical parameters**
   - Generated GERG2008 EOS data for pure CO2, H2S, N2, and H2 across temperatures of 50-300°F and pressures of 14.7-15,000 psia. Densities were converted into Z-Factors, and along with viscosities tabulated.
 - **Mixture properties for fitting temperature dependent inert:inert BIP pairs**
