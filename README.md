@@ -7,6 +7,7 @@
 **Third Update**: 19-05-2024 -> 05-06-2024  
 **Fourth Update**: 15-06-2024  
 **Fifth Update**: 14-07-2024
+**Sixth Update**: 02-09-2024
  
 
 Following feedback from Curtis Whitson and Simon Tortike, I explored the potential of extending the single-component Peng-Robinson Z-Factor method to explicitly incorporate inerts. This was driven by two main considerations: 
@@ -41,16 +42,19 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 - Fourth update of this work (15th June):
   1. Retuned inerts and hydrocarbon single component critical parameters to minimize deviance from standard critical properties
   2. Added support for Hydrogen (critical paremeters and BIP pairs)
-- Fifth update of this work (23rd June, with current GitHub content):
+- Fifth update of this work (23rd June 2024):
   1. Re-digitized Standing & Katz data to address slight errors, and re-regressed the 'Gas' component with default Omegas
   2. Simplified the Inert:Inert BIP pairs to constants.
   3. Moved to H2 critical properties outlined in SPE214437
   4. Moved to alternate Tc and Pc form that extrapolates more inline with Twu at higher MW's
+- Sixth update of this work (2nd September 2024, with current GitHub content):
+  1. Refit 'Gas' model to Standing & Katz data from Table A2 of Natural Gas Engineering Handbook from Katz et al. Delivers very minor change, however now data tied to published information and with higher granularity.
+  2. Pure inert component fits left unchanged. Refit subsequent BIP and Viscosity parameters
 
 ## Data Sources used
 
 - **Standing & Katz Z-Factors for pure hydrocarbon gas**
-  - Digitized 515 Z-Factor data points from original Standing & Katz plot found in SPE-942140 - "Density of Natural Gases"  
+  - Appendix A, Table A-2 of Handbook of Natural Gas Engineering, Katz et al.  
 - **Pure inert critical parameters**
   - Generated GERG2008 EOS data for pure CO2, H2S, N2, and H2 across temperatures of 50-300°F and pressures of 14.7-15,000 psia. Densities were converted into Z-Factors, and along with viscosities tabulated.
 - **Mixture properties for fitting temperature dependent inert:inert BIP pairs**
@@ -63,7 +67,7 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 ## Steps
 
-1.	From digitized Standing & Katz plot, using PR & Peneloupe EOS, fit a single component ‘Gas’ model to reduced pressure and temperature data by regressing on ACF, VTRANS OmegA and OmegaB
+1.	From Standing & Katz data, using PR & Peneloupe EOS, fit a single component ‘Gas’ model to reduced pressure and temperature data by regressing on ACF and VTRANS. OmegA and OmegaB
 2.	With data generated from GERG2008 EOS, regress on critical parameters for pure CO2, H2S, N2 and H2. 
   a.	Changing ACF, VTRAN, OmegaA and OmegaB for CO2
   b.	VTRAN, OmegaA and OmegaB for H2S
@@ -78,19 +82,19 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 | Comp | MW    | Tc (R)  | Pc (psia) | ACF     | VTRAN   | OmegaA  | OmegaB   | VcVis (ft³/lbmol)|
 |------|-------|---------|-----------|---------|---------|---------|----------|------------------|
-| CO2  | 44.01 | 547.416 | 1069.51   | 0.12256 | -0.27593| 0.427705| 0.0696460| 1.43577          |
-| H2S  | 34.082| 672.12  | 1299.97   | 0.04916 | -0.22896| 0.436743| 0.0724373| 1.45077          |
-| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.21067| 0.457236| 0.0777961| 1.33582          |
-| H2   |  2.016|  47.430 | 187.53    | -0.2170 | -0.32400| 0.457236| 0.0777961| 0.75793          |
-| Gas  | *     | *       | *         | -0.04289| -0.19322| 0.457236| 0.0777961| *                |
+| CO2  | 44.01 | 547.416 | 1069.51   | 0.12256 | -0.27593| 0.427705| 0.0696460| 1.43556          |
+| H2S  | 34.082| 672.12  | 1299.97   | 0.04916 | -0.22896| 0.436743| 0.0724373| 1.45055          |
+| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.21067| 0.457236| 0.0777961| 1.33560          |
+| H2   |  2.016|  47.430 | 187.53    | -0.2170 | -0.32400| 0.457236| 0.0777961| 0.75786          |
+| Gas  | *     | *       | *         | -0.03899| -0.19076| 0.457236| 0.0777961| *                |
 
 **Properties are MW dependent*  
 
 | Variable   | Tc              | Pc           |
 |------------|-----------------|--------------|
-| A          | 2657.114838     | 8.02982E-05  |
-| B          | 183.6060878     | 0.056591187  |
-| C          | 11.1719738      | 0.767839091  |
+| A          | 2654.673870     | 8.105446E-05 |
+| B          | 183.525857      | 0.0567559    |
+| C          | 11.188806       | 0.7649982    |
     
 mw_hc = Inert free hydrocarbon gas MW
 
@@ -102,18 +106,18 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | Gas:Inert BIP Parameters | A             |  B           |   C        |
 |--------------------------|---------------|--------------|------------|
-| CO2                      |  0.412165     | -0.0029403   |  -161.595  |
-| H2S                      |  0.294137     | -0.00454259  |  -66.1275  |
-| N2                       |  0.530108     | -0.00455426  |  -230.797  |
-| H2                       |  0.829713     |  0.00874856  |  -481.019  |
+| CO2                      |  0.397871     | -0.00276205  |  -157.440  |
+| H2S                      |  0.281553     | -0.00441606  |  -61.19800 |
+| N2                       |  0.509440     | -0.00437519  |  -222.582  |
+| H2                       |  0.809360     |  0.00884004  |  -470.398  |
 
 `Hydrocarbon:Inert BIPs = A + B * mw_hc + C / DegR`  
     
 | BIP Pair Values  |  CO2     |  H2S    |  N2    | 
 |------------------|----------|---------|--------|
-| H2S              | 0.0567332|         |        | 
-| N2               |-0.205067 |-0.212124|        | 
-| H2               | 0.648344 | 0.65000 | 0.36917| 
+| H2S              | 0.057084 |         |        | 
+| N2               |-0.220628 |-0.195055|        | 
+| H2               | 0.648104 | 0.65000 | 0.36917| 
 
 # Pure Hydrocarbon Gas Residual Error Plots
 
@@ -149,14 +153,14 @@ mw_hc = Inert free hydrocarbon gas MW
 
 | Method (vs Wichert data only) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |-------------------------------|----------------|----------------|----------------------|
-| Peng Robinson                 | -0.003         | 0.050          | 0.0232               |
+| Peng Robinson                 | -0.003         | 0.052          | 0.0243               |
 | DAK + Sutton & Wichert        | 0.007          | 0.097          | 0.0336               |
 | DAK + PMC                     | 0.004          | 0.157          | 0.0349               |
 
 | Method (vs Wichert & GERG data) | Avg Rel. Error | Max Rel. Error | 95% of rel. errors < |
 |---------------------------------|----------------|----------------|----------------------|
-| Peng Robinson                   | -0.001         | 0.077          | 0.0267               |
-| DAK + Sutton & Wichert          | 0.004          | 0.431          | 0.0999               |
+| Peng Robinson                   | -0.001         | 0.082          | 0.0277               |
+| DAK + Sutton & Wichert          | 0.006          | 0.431          | 0.0999               |
 | DAK + PMC                       | 0.032          | 0.654          | 0.1427               |
 
 
