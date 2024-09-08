@@ -98,10 +98,10 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
     
 mw_hc = Inert free hydrocarbon gas MW
 
-`Gas Tc (R) = A * (mw_hc + C) /(B + mw_hc + C)`  
-`Gas Pc (psia) = 0.3074 * R * Tc / (A * mw_hc**2 + B * mw_hc + C),  where R = 10.7316`  
-`Gas VcVis (ft³/lbmol) = 0.057687137 * mw_hc + 0.481279091`  
-`LBC P3, P4 = -3.88277e-02,  9.14211e-03`  
+`Hydrocarbon Gas Tc (R) = A * (mw_hc + C) /(B + mw_hc + C)`  
+`Hydrocarbon Gas Pc (psia) = 0.3074 * R * Tc / (A * mw_hc**2 + B * mw_hc + C),  where R = 10.7316`  
+`Hydrocarbon Gas VcVis (ft³/lbmol) = 0.0577172 * mw_hc + 0.480478182`  
+`LBC P3, P4 = -0.0388177,  0.00913868`  
 
 
 | Gas:Inert BIP Parameters | A             |  B           |   C        |
