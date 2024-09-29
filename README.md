@@ -99,7 +99,7 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
     
 mw_hc = Inert free hydrocarbon gas MW
 
-`Hydrocarbon Gas Vc/Zc (ft³/lbmol) = A * mw_hc**2 + B * mw_hc + C`
+`Hydrocarbon Gas Vc/Zc (ft³/lbmol) = A * mw_hc**2 + B * mw_hc + C`  
 `Hydrocarbon Gas Tc (R) = A * ((Vc/Zc) + C) /(B + (Vc/Zc) + C)`  
 `Hydrocarbon Gas Pc (psia) = R * Tc / (Vc/Zc),  where R = 10.7316`  
 `Hydrocarbon Gas VcVis (ft³/lbmol) = 0.057556625977 *  mw_hc + 0.4843091`  
