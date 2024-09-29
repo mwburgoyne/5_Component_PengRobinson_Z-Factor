@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/bc1f2c16-9660-456f-8831-383cb1d69ebf)# Improving the Single Component Peng-Robinson Z-Factor Approach for Inerts
+# Improving the Single Component Peng-Robinson Z-Factor Approach for Inerts
 
 **Author**: Mark Burgoyne  
 **First released**: 05-04-2024  
