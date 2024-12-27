@@ -47,10 +47,12 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
   2. Simplified the Inert:Inert BIP pairs to constants.
   3. Moved to H2 critical properties outlined in SPE214437
   4. Moved to alternate Tc and Pc form that extrapolates more inline with Twu at higher MW's
-- Sixth update of this work (2nd September 2024, with current GitHub content):
+- Sixth update of this work (2nd September 2024):
   1. Refit 'Gas' model to Standing & Katz data from Table A2 of Natural Gas Engineering Handbook from Katz et al. Delivers very minor change, however now data tied to published information and with higher granularity.
   2. Pure inert component fits left unchanged. Refit subsequent BIP and Viscosity parameters
   3. Fit Tc as a function of Vc/Zc rather than Gas MW
+- Seventh update of this work (28th December 2024, with current GitHub content):
+  1. Refit viscosities: (a) Introduce pure methane viscosity from NIST, (b) Limit maximum pressure to 10,000 psia from NIST, (c) Limit Lee Gonzalez & Eakin to 5,000 psia for pure hydrocarbons heavier than methane due to accuracy concerns above this
 
 ## Data Sources used
 
@@ -74,7 +76,7 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
   b.	VTRAN, OmegaA and OmegaB for H2S
   c.	VTRAN only for N2 and H2
 3.	Using (a) real data published by Wichert, augmented with (b) synthetic GERG2008 data to anchor scenarios with elevated hydrocarbon MW, regress on (i) hydrocarbon gas : inert BIP’s as a function of temperature and hydrocarbon MW, and inert:inert BIP's and (ii) Tc and Pc behaviour as a function of hydrocarbon gas MW to match Z-Factors
-4.	Tune VCVIS and LBC coefficients to match single component inert viscosity (from NIST) and Lee Gonzalez & Eakin viscosity for pure hydrocarbon gas.
+4.	Tune VCVIS and LBC coefficients to match single component inert (& methane) viscosity (from NIST to 10,000 psia) and Lee Gonzalez & Eakin viscosity (to 5,000 psia) for pure hydrocarbon gas.
 
 
 ## Results
@@ -83,10 +85,10 @@ Instead of using conventional correlations such as Sutton & Wichert Aziz or PMC 
 
 | Comp | MW    | Tc (R)  | Pc (psia) | ACF     | VTRAN   | OmegaA  | OmegaB   | VcVis (ft³/lbmol)|
 |------|-------|---------|-----------|---------|---------|---------|----------|------------------|
-| CO2  | 44.01 | 547.416 | 1069.51   | 0.12256 | -0.27593| 0.427705| 0.0696460| 1.43561          |
-| H2S  | 34.082| 672.12  | 1299.97   | 0.04916 | -0.22896| 0.436743| 0.0724373| 1.45060          |
-| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.21067| 0.457236| 0.0777961| 1.33564          |
-| H2   |  2.016|  47.430 | 187.53    | -0.2170 | -0.32400| 0.457236| 0.0777961| 0.75787          |
+| CO2  | 44.01 | 547.416 | 1069.51   | 0.12256 | -0.27593| 0.427705| 0.0696460| 1.46009          |
+| H2S  | 34.082| 672.12  | 1299.97   | 0.04916 | -0.22896| 0.436743| 0.0724373| 1.46448          |
+| N2   | 28.014| 227.16  | 492.84    | 0.03700 | -0.21067| 0.457236| 0.0777961| 1.35419          |
+| H2   |  2.016|  47.430 | 187.53    | -0.2170 | -0.32400| 0.457236| 0.0777961| 0.67967          |
 | Gas  | *     | *       | *         | -0.03899| -0.19076| 0.457236| 0.0777961| *                |
 
 **Properties are MW dependent*  
@@ -102,8 +104,8 @@ mw_hc = Inert free hydrocarbon gas MW
 `Hydrocarbon Gas Vc/Zc (ft³/lbmol) = A * mw_hc**2 + B * mw_hc + C`  
 `Hydrocarbon Gas Tc (R) = A * ((Vc/Zc) + C) /(B + (Vc/Zc) + C)`  
 `Hydrocarbon Gas Pc (psia) = R * Tc / (Vc/Zc),  where R = 10.7316`  
-`Hydrocarbon Gas VcVis (ft³/lbmol) = 0.057556625977 *  mw_hc + 0.4843091`  
-`LBC P3, P4 = -0.038819,  0.00913902`  
+`Hydrocarbon Gas VcVis (ft³/lbmol) = 0.057731823 *  mw_hc + 0.472597231`  
+`LBC P3, P4 = -3.92841e-02,  9.28706e-03`  
 
 
 | Gas:Inert BIP Parameters | A             |  B           |   C        |
