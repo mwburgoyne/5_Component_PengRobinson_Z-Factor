@@ -58,7 +58,7 @@ ACF = np.array([0.12256, 0.04916, 0.037, -0.21700, -0.03899])
 VSHIFT = np.array([-0.27593, -0.22896, -0.21066, -0.32400, -0.19076])
 OmegaA = np.array([0.427705, 0.436743, 0.457236, 0.457236, 0.457236])
 OmegaB = np.array([0.0696460, 0.0724373, 0.0777961, 0.0777961, 0.0777961]) 
-VCVIS = np.array([1.43561, 1.45060, 1.33564, 0.75787, 0]) # cuft/lbmol    
+VCVIS = np.array([1.46020, 1.46460, 1.35422, 0.67967, 0]) # cuft/lbmol    
     
 def calc_bips(hc_mw, degf):                                                                     
     degR = degf + degF2R  
@@ -136,7 +136,7 @@ def lbc(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2 = 0.0):
     hc_gas_mw = sg_hc * mwAir
         
     def vcvis_hc(mw): # Returns hydrocarbon gas VcVis for LBC viscosity calculations   
-        return  0.0575566259767157 *  mw + 0.484309090909092 # ft3/lbmol      
+        return  0.057511062 *  mw + 0.478400158 # ft3/lbmol      
                                             
     mws[-1]  = hc_gas_mw
     tcs[-1], pcs[-1] = tc_pc(hc_gas_mw/mwAir)
@@ -162,7 +162,7 @@ def lbc(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2 = 0.0):
         sqrt_mws = np.sqrt(mws)
         return np.sum(zi * ui * sqrt_mws)/np.sum(zi * sqrt_mws)
 
-    a = [0.1023, 0.023364, 0.058533, -0.038819, 0.00913902] # P3 and P4 have been modified
+    a = [0.1023, 0.023364, 0.058533, -3.92835e-02,  9.28591e-03] # P3 and P4 have been modified
     # Calculate the viscosity of the mixture using the Lorenz-Bray-Clark method.
     rhoc = 1/np.sum(VCVIS*zi)
     Tc = tcs * 5/9    # (deg K)
