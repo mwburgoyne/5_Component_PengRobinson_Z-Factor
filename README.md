@@ -19,26 +19,26 @@ I will update the final version, complete with (a) data files used to replicate 
 import bns as bns
 
 # With Metric = True, temperature is in deg C, pressure in MPa and results are also in Metric units per below comments
-bns.pr_properties(temp=20, pres=1, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = True)
+bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = True, verbose=False)
 
-{'Z': 0.9774927909395308,
- 'Density': 6.733398040501448,      # kg/m3
- 'H': -9.291398955385844,           # kJ/(kmol K)
- 'Cp': 20.29653028742051,           # kJ/(kmol K)
- 'Cv': 15.180692602056988,          # kJ/(kmol K)
- 'JT': 5.1202038900231805,          # degC/MPa
- 'Viscosity': 0.01109866095887059}  # cP
+{'Z': 0.7944621266226587,          
+ 'Density': 150.2349088516243,       # kg/m3
+ 'H': -1319.329928203718,            # kJ/(kmol K)
+ 'Cp': 29.959201729724857,           # kJ/(kmol K)
+ 'Cv': 16.468292645466228,           # kJ/(kmol K)
+ 'JT': 3.0021587927368976,           # degC/MPa
+ 'Viscosity': 0.017891220671928647}  # cP
  
 # With Metric = False (or omitted), temperature in deg F, pressure in psia, and results return in Field units
-bns.pr_properties(temp=120, pres=2000, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = False)
+bns.pr_properties(temp=120, pres=2000, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = False, verbose=False)=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = False)
 
-{'Z': 0.7659286647434862,
- 'Density': 9.939570654063326,      # lbm/cuft
- 'H': -701.2889499297443,           # Btu/(lb-mol·R)
- 'Cp': 13.57348973097375,           # Btu/(lb-mol·R)
- 'Cv': 7.053849310183024,           # Btu/(lb-mol·R)
- 'JT': 0.03997877139841768,         # degF/psia
- 'Viscosity': 0.01858423360291733}  # cP
+{'Z': 0.7944619554787016,          
+ 'Density': 9.378880419882602,       # lbm/cuft
+ 'H': -567.211782446623,             # Btu/(lb-mol·R)
+ 'Cp': 12.880145889350626,           # Btu/(lb-mol·R)
+ 'Cv': 7.080091914434776,            # Btu/(lb-mol·R)
+ 'JT': 0.03725841931589119,          # degF/psia
+ 'Viscosity': 0.017891238655880173}  # cP
  
 # With other flags to False, or omitted, just Z-Factor is calculated & returned
 # If 100% inert mixture, then gas sg input is ignored
