@@ -12,13 +12,13 @@ The thermodynamic model developed consists of a volume-translated Peng-Robinson 
 This unified method simplifies scoping level gas property calculations by using one coherent, physics-based framework, analytically solved, enhancing accuracy and usability. Its versatility enables straightforward spreadsheet implementation for most applications and easy integration into reservoir simulation software, providing a practical alternative suitable for traditional petroleum engineering workflows and emerging applications in carbon capture, utilization, and storage (CCUS) and underground hydrogen storage.
 
 ## Where are the files?
-I will update the final version, complete with (a) data files used to replicate this work, (b) Working python code example, (c) Working Excel example, (d) link to Techncial paper describing the methodology once completed. In the mean time, contact me directly if you woud like an interim version: mark dot w dot burgoyne at gmail.com
+I will update the final version, complete with (a) data files used to replicate this work, (b) Working python code example, (c) Working Excel example, (d) link to Techncial paper describing the methodology once completed. In the mean time, contact me directly if you woud like an interim version: mark dot w dot burgoyne at gmail dot com
 
 ## Example usage
 ```python
 import bns as bns
 
-# With Metric = True, temperature in deg C and pressure in MPa
+# With Metric = True, temperature is in deg C, pressure in MPa and results are also in Metric units per below comments
 bns.pr_properties(temp=20, pres=1, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = True, verbose=False)
 
 {'Z': 0.9774927909395308,
