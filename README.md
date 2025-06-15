@@ -19,7 +19,7 @@ I will update the final version, complete with (a) data files used to replicate 
 import bns as bns
 
 # With Metric = True, temperature is in deg C, pressure in MPa and results are also in Metric units per below comments
-bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = True, verbose=False)
+bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = True)
 
 {'Z': 0.7944621266226587,          
  'Density': 150.2349088516243,       # kg/m3
@@ -30,7 +30,7 @@ bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2
  'Viscosity': 0.017891220671928647}  # cP
  
 # With Metric = False (or omitted), temperature in deg F, pressure in psia, and results return in Field units
-bns.pr_properties(temp=120, pres=2000, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = False, verbose=False)=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = False)
+bns.pr_properties(temp=120, pres=2000, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = False)
 
 {'Z': 0.7944619554787016,          
  'Density': 9.378880419882602,       # lbm/cuft
