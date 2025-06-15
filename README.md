@@ -15,7 +15,7 @@ This unified method simplifies scoping level gas property calculations by using 
 ```python
 import bns as bns
 
-# With Metric = True, teperature in deg C and pressure in MPa
+# With Metric = True, temperature in deg C and pressure in MPa
 bns.pr_properties(temp=20, pres=1, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = True, verbose=False)
 
 {'Z': 0.9774927909395308,
@@ -26,7 +26,7 @@ bns.pr_properties(temp=20, pres=1, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02,
  'JT': 5.1202038900231805,          # degC/MPa
  'Viscosity': 0.01109866095887059}  # cP
  
-# With Metric = False (or omitted), teperature in deg F and pressure in psia
+# With Metric = False (or omitted), temperature in deg F and pressure in psia
 bns.pr_properties(temp=120, pres=2000, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = False, verbose=False)
 
 {'Z': 0.7659286647434862,
@@ -39,9 +39,9 @@ bns.pr_properties(temp=120, pres=2000, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0
  
 # With other flags to False, or omitted, just Z-Factor is calculated & returned
 # If 100% inert mixture, then gas sg input is ignored
-# If implied gas sg < methane, then sg inout ignored and hydrocarbon MW set to methane.
-# Any inerts undefined default to zero mole fraction
-bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)
+# If implied hydrocarbon gas sg < methane, then sg input is ignored and hydrocarbon MW set to methane.
+# Any inerts with undefined mole fractions default to zero mole fraction
+bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)   # 100% CO2
 {'Z': 0.2778261815694524}
 
 
