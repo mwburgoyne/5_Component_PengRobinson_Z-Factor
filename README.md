@@ -29,7 +29,7 @@ bns.pr_properties(temp=20, pres=1, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02,
  'JT': 5.1202038900231805,          # degC/MPa
  'Viscosity': 0.01109866095887059}  # cP
  
-# With Metric = False (or omitted), temperature in deg F and pressure in psia
+# With Metric = False (or omitted), temperature in deg F, pressure in psia, and results return in Field units
 bns.pr_properties(temp=120, pres=2000, sg=16.0425/28.97,  co2=0.2, h2s=0.1, n2=0.02, h2=0, viscosity=True, density=True, thermo=True, Metric = False)
 
 {'Z': 0.7659286647434862,
