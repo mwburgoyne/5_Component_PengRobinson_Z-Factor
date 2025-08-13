@@ -2,7 +2,7 @@
 
 **Author**: Mark Burgoyne  
 **First released**: 05-04-2024  
-**Most recent update**: 14-08-2025
+**Most recent update**: 13-08-2025
 
 Example implementations in Python and Excel VBA of method outlined in ADIPEC 2025 paper, SPE-229932-MS
 
