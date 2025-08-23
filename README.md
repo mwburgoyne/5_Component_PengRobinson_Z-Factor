@@ -1,4 +1,4 @@
-# A Universal, EOS-Based Correlation for Z-Factor, Viscosity and Thermal Properties For Hydrocarbon and H2, N2, CO2, H2S Gas Mixtures
+# A Universal, EOS-Based Correlation for Z-Factor, Viscosity and Thermal Properties For Hydrocarbon and H<sub>2</sub>, N<sub>2</sub>, CO<sub>2</sub>, H<sub>2</sub>S Gas Mixtures
 
 **Author**: Mark Burgoyne  
 **First released**: 05-04-2024  
