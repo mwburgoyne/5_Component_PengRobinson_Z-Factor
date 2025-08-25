@@ -296,11 +296,14 @@ def pr_properties(
     'Density':   Gas Density                                  (lbm/cuft or kg/m3)
     'H':         Enthalpy relative to 60 degF and 14.606 psia (Btu/(lb-mol·R) or kJ/(kmol K))
     'Cp':        Isobaric heat capacity                       (Btu/(lb-mol·R) or kJ/(kmol K))
-    'Cv':        Isochoric heat capacity                      (Btu/(lb-mol·R) or kJ/(kmol K)) - Note, this has known inaccuracies
     'JT':        Joule-Thomson COefficient                    (Btu/(lb-mol·R) / degC/MPa)
     'Viscosity': Gas viscosity                                (cP or mPa·s)} 
 
     """
+    
+    # Note that Cv has known innacuracies as it relies on second derivatives poorly characterized with cubic EOS
+    # I have left the Cv calculation in the code, but do not return it
+    # 'Cv':        Isochoric heat capacity                      (Btu/(lb-mol·R) or kJ/(kmol K)) - 
 
     if (co2 + h2s + n2 + h2) > 1.0:
         raise ValueError(
@@ -503,7 +506,7 @@ def pr_properties(
         result.update({
             "H": float(H_total_Btu),
             "Cp": float(Cp_total_Btu),
-            "Cv": float(Cv_total_Btu),
+            #"Cv": float(Cv_total_Btu),
             "JT": float(mu_JT)
         })
     if viscosity:
@@ -517,7 +520,7 @@ def pr_properties(
         if thermo:
             result["H"] *= 2.326 # kJ/(kmol K)
             result["Cp"] *= 2.326
-            result["Cv"] *= 2.326
+            #result["Cv"] *= 2.326
             result["JT"] *= 80.5765 # degC/MPa
     
     return result
