@@ -294,9 +294,9 @@ def pr_properties(
     Returns a dictionary of results - depending on requested values - that always includes Z-factor and optionally;
     {'Z':        Z-Factor                                     (Dimensionless)          
     'Density':   Gas Density                                  (lbm/cuft or kg/m3)
-    'H':         Enthalpy relative to 60 degF and 14.606 psia (Btu/(lb-mol·R) or kJ/(kmol K))
+    'H':         Enthalpy relative to 60 degF and 14.606 psia (Btu/(lb-mol) or kJ/(kmol))
     'Cp':        Isobaric heat capacity                       (Btu/(lb-mol·R) or kJ/(kmol K))
-    'JT':        Joule-Thomson COefficient                    (Btu/(lb-mol·R) / degC/MPa)
+    'JT':        Joule-Thomson Coefficient                    (degF/psi or degC/MPa)
     'Viscosity': Gas viscosity                                (cP or mPa·s)} 
 
     """
@@ -518,9 +518,9 @@ def pr_properties(
         if density:
             result['Density'] *= 16.01846337396 # kg/m 
         if thermo:
-            result["H"] *= 2.326 # kJ/(kmol K)
-            result["Cp"] *= 2.326
-            #result["Cv"] *= 2.326
-            result["JT"] *= 80.5765 # degC/MPa
+            result["H"] *= 2.326 # kJ/(kmol)
+            result["Cp"] *= 4.186800585 # kJ/(kmol·K)
+            result["Cv"] *= 4.186800585 # kJ/(kmol·K)
+            result["JT"] *= 80.576521 # degC/MPa
     
     return result
