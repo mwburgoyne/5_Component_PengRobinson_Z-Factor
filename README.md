@@ -24,12 +24,12 @@ import bns as bns
 # With Metric = True, temperature is in deg C, pressure in MPa and results are also in Metric units per below comments
 bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.1, viscosity=True, density=True, thermo=True, Metric = True)
 
-{'Z': 0.7941023149604872,            
- 'Density': 150.3029810272768,       # kg/m3      
- 'H': -1317.2886784911848,           # kJ/(kmol K)
- 'Cp': 29.960479965499285,           # kJ/(kmol K)
- 'Cv': 16.466859781502208,           # kJ/(kmol K)
- 'JT': 3.0063074029802013,           # degC/MPa
+{'Z': 0.7941023149604872,
+ 'Density': 150.3029810272768,       # kg/m3    
+ 'H': -1317.2886784911848,           # kJ/(kmol)
+ 'Cp': 53.92887147310112,            # kJ/(kmol K)
+ 'Cv': 29.640351748197087,           # kJ/(kmol K)
+ 'JT': 3.0063081864897288,           # degC/MPa
  'Viscosity': 0.01790543522353429}   # mPa·s
  
 # With Metric = False (or omitted), temperature in deg F, pressure in psia, and results return in Field units
@@ -37,7 +37,7 @@ bns.pr_properties(temp=120, pres=2000, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.
 
 {'Z': 0.7941021413708897,          
  'Density': 9.383130066514621,       # lbm/cuft
- 'H': -566.3342058639222,            # Btu/(lb-mol·R)
+ 'H': -566.3342058639222,            # Btu/(lb-mol)
  'Cp': 12.880695477802188,           # Btu/(lb-mol·R)
  'Cv': 7.079475893321194,            # Btu/(lb-mol·R)
  'JT': 0.03730990614059873,          # degF/psia
