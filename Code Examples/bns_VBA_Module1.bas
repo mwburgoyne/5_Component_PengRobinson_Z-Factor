@@ -5,12 +5,10 @@
 ' additions below). Exported so the VBA is reviewable and diffable in git rather
 ' than living only inside the workbook binary.
 '
-' IMPORTANT: the .xlsm in this folder still carries the PRE-FIX VBA. Rewriting VBA
-' inside a workbook from outside Excel cannot be done safely (Excel may keep running
-' the cached p-code and silently ignore patched source), so the workbook has to be
-' updated by hand: open it, Alt+F11, right-click Module1 > Remove Module (no export
-' needed), then File > Import File and pick this .bas. Save, and the workbook matches
-' the Python, Fortran and Rust implementations again.
+' This file and the workbook are in step as of 15 August 2026. Excel owns the copy
+' inside the .xlsm, so keep them in step by hand: edit in the VBE, then export
+' Module1 over this file. Patching the workbook from outside Excel is not safe,
+' because Excel can keep running the cached p-code and ignore patched source.
 '
 Attribute VB_Name = "Module1"
 Option Explicit
