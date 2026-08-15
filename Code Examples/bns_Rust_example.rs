@@ -401,6 +401,13 @@ fn pr_properties(
     let mut shift = 0.0;
     for i in 0..5 { shift += zf[i] * vshift[i] * bi[i]; }
     let z_vshift = z_eos - shift;
+    // Peneloux translation as a constant molar volume offset (ft3/lb-mol):
+    //   V_shifted = V_eos - c_mix,  c_mix = SUM(zf * vshift * b_i)
+    // The p/T dependence in bi cancels against RT/p exactly, so c_mix is constant.
+    // A constant translation leaves Cp, Cv and entropy unchanged, but shifts enthalpy
+    // by -c_mix*p and the JT coefficient by +c_mix/Cp.
+    let mut c_mix = 0.0;
+    for i in 0..5 { c_mix += zf[i] * vshift[i] * b_i[i]; }
 
     let mut res = PrResult { z: z_vshift, ..Default::default() };
 
@@ -507,7 +514,12 @@ fn pr_properties(
               + a[4]/5.0*(t_k.powi(5) - t_ref_k.powi(5));
             h_ig_btu += zf[i] * CONSTS.R_THERMO * 9.0/5.0 * term;
         }
-        let h_total_btu = h_ig_btu + h_dep_btu - h0_mix;
+        // Volume-shift contribution to enthalpy: H_shifted = H_eos - c_mix*p.
+        // Reported H is relative to 60 degF and 14.696 psia, so the reference term
+        // cancels and the h0 reference constants stay valid unchanged.
+        const P_REF_PSIA: f64 = 14.696;
+        let h_vshift_btu = -c_mix * (psia - P_REF_PSIA) / CONSTS.FT3_PSIA_TO_BTU;
+        let h_total_btu = h_ig_btu + h_dep_btu + h_vshift_btu - h0_mix;
 
         // Cp departure = d(H_dep)/dT
         let dBdim_dT = - bdim / degR;
@@ -522,13 +534,17 @@ fn pr_properties(
         let cp_total_btu = cp_ig + dHdep_dT_btu;
 
         // Cv and JT
+        // Cp and Cv are evaluated on the untranslated EOS deliberately: a constant
+        // translation leaves U(T,V) and S(T,p) unchanged, so both are invariant.
         let v = z_eos * CONSTS.R * degR / psia;
+        let v_shifted = v - c_mix;
         let dV_dT = (CONSTS.R / psia) * (z_eos + degR*dz_dT);
         let den = (v*v + 2.0*b_mix*v - b_mix*b_mix).powi(2);
         let dP_dV_constT = - CONSTS.R*degR / (v - b_mix).powi(2) + 2.0*a_mix*(v + b_mix) / den;
         let cv_total_btu = cp_total_btu + (degR * dV_dT*dV_dT * dP_dV_constT) / CONSTS.FT3_PSIA_TO_BTU;
 
-        let mu_jt = (degR * dV_dT - v) / (cp_total_btu * CONSTS.FT3_PSIA_TO_BTU);
+        // JT uses the translated volume, consistent with reported density and enthalpy
+        let mu_jt = (degR * dV_dT - v_shifted) / (cp_total_btu * CONSTS.FT3_PSIA_TO_BTU);
 
         res.h  = Some(h_total_btu);
         res.cp = Some(cp_total_btu);

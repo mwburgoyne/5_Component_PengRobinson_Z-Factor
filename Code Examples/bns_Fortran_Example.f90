@@ -356,7 +356,9 @@ subroutine pr_properties( &
   real(real64) :: t_k, cp_vals(ncomp), cp_ig, bdim, h_dep_ft3psia, h_dep_btu
   real(real64) :: h0(ncomp), h0_mix, t_ref_k, term, h_ig_btu, h_total_btu
   real(real64) :: dBdim_dT, num_n, den_d, dln_dT, x, dx_dT, dHdep_dT_btu, cp_total_btu
-  real(real64) :: v, dV_dT, den4, dP_dV_T, cv_total_btu, mu_jt
+  real(real64) :: v, v_shifted, dV_dT, den4, dP_dV_T, cv_total_btu, mu_jt
+  real(real64) :: c_mix, h_vshift_btu
+  real(real64), parameter :: P_REF_PSIA = 14.696_real64
   integer :: i, j
 
   if (co2 + h2s + n2 + h2 > 1.0_real64 + 1.0e-12_real64) then
@@ -411,10 +413,17 @@ subroutine pr_properties( &
   c0 = -(a_dim*b_dim - b_dim*b_dim - b_dim*b_dim*b_dim)
   call solve_pr_cubic_select(c2,c1,c0, a_dim, b_dim, z_eos, ideal_fallback)
 
+  ! Peneloux translation as a constant molar volume offset (ft3/lb-mol):
+  !   V_shifted = V_eos - c_mix,  c_mix = SUM(zf * vshift * b_i)
+  ! The p/T dependence in bi cancels against RT/p exactly, so c_mix is constant.
+  ! A constant translation leaves Cp, Cv and entropy unchanged, but shifts enthalpy
+  ! by -c_mix*p and the JT coefficient by +c_mix/Cp.
   shift = 0.0_real64
+  c_mix = 0.0_real64
   do i=1,ncomp
     bi(i) = omega_b(i) * (prs_r(i) / trs(i))
     shift = shift + zf(i) * vshift(i) * bi(i)
+    c_mix = c_mix + zf(i) * vshift(i) * b_i(i)
   end do
   z = z_eos - shift
 
@@ -488,7 +497,11 @@ subroutine pr_properties( &
       h_ig_btu = h_ig_btu + zf(i)*Rthermo*(9.0_real64/5.0_real64)*term
     end do
 
-    h_total_btu = h_ig_btu + h_dep_btu - h0_mix
+    ! Volume-shift contribution to enthalpy: H_shifted = H_eos - c_mix*p.
+    ! Reported H is relative to 60 degF and 14.696 psia, so the reference term
+    ! cancels and the h0 reference constants stay valid unchanged.
+    h_vshift_btu = -c_mix * (psia - P_REF_PSIA) / FT3PSIA_TO_BTU
+    h_total_btu = h_ig_btu + h_dep_btu + h_vshift_btu - h0_mix
 
     dBdim_dT = - bdim / degR
     num_n = z_eos + (SQRT2 + 1.0_real64)*bdim
@@ -502,13 +515,17 @@ subroutine pr_properties( &
 
     cp_total_btu = cp_ig + dHdep_dT_btu
 
+    ! Cp and Cv are evaluated on the untranslated EOS deliberately: a constant
+    ! translation leaves U(T,V) and S(T,p) unchanged, so both are invariant.
     v = z_eos * Rgas * degR / psia
+    v_shifted = v - c_mix
     dV_dT = (Rgas/psia) * (z_eos + degR*dz_dT)
     den4 = (v*v + 2.0_real64*b_mix*v - b_mix*b_mix)**2
     dP_dV_T = - Rgas*degR / (v - b_mix)**2 + 2.0_real64*a_mix*(v + b_mix)/den4
     cv_total_btu = cp_total_btu + (degR * dV_dT*dV_dT * dP_dV_T) / FT3PSIA_TO_BTU
 
-    mu_jt = (degR * dV_dT - v) / (cp_total_btu * FT3PSIA_TO_BTU)
+    ! JT uses the translated volume, consistent with reported density and enthalpy
+    mu_jt = (degR * dV_dT - v_shifted) / (cp_total_btu * FT3PSIA_TO_BTU)
 
     h_out  = h_total_btu
     cp_out = cp_total_btu
@@ -547,7 +564,7 @@ program demo
   print '(A,F18.10)',    'Z   = ', z
   print '(A,F18.10, A)', 'rho = ', rho, ' (lbm/ft^3)'
   print '(A,F18.10, A)', 'mu  = ', mu,  ' (cP)'
-  print '(A,F18.10, A)', 'H  = ', cp,  ' (Btu/(lb-mol))'
+  print '(A,F18.10, A)', 'H   = ', h,   ' (Btu/(lb-mol))'
   print '(A,F18.10, A)', 'Cp  = ', cp,  ' (Btu/(lb-mol·R))'
   print '(A,F18.10, A)', 'Cv  = ', cv,  ' (Btu/(lb-mol·R))'
   print '(A,F18.10, A)', 'JT  = ', jt,  ' (F/psi)'
