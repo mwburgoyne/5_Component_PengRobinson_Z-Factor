@@ -346,6 +346,12 @@ def pr_properties(
     z_eos, ideal_gas_flag = cubic_root(coeffs, A, B)
     Bi = OmegaB * (prs / trs)
     z_vshift = z_eos - np.dot(zf, VSHIFT * Bi)
+    # Peneloux translation as a constant molar volume offset (ft3/lb-mol):
+    #   V_shifted = V_eos - c_mix,  c_mix = SUM(zf * VSHIFT * b_i)
+    # The p/T dependence in Bi cancels against RT/p exactly, so c_mix is constant.
+    # A constant translation leaves Cp, Cv and entropy unchanged, but shifts enthalpy
+    # by -c_mix*p and the JT coefficient by +c_mix/Cp.
+    c_mix = float(np.dot(zf, VSHIFT * b_i))
     result = {"Z": float(z_vshift)}
     
     if density:
@@ -433,7 +439,12 @@ def pr_properties(
           + cp[:,3]/4 * (T_K**4 - T_ref_K**4)
           + cp[:,4]/5 * (T_K**5 - T_ref_K**5)
         ))
-        H_total_Btu = H_IG_Btu + H_dep_Btu - H0
+        # Volume-shift contribution to enthalpy: H_shifted = H_eos - c_mix*p.
+        # Reported H is relative to 60 degF and 14.696 psia, so the reference term
+        # cancels and the fitted H0_ constants above stay valid unchanged.
+        P_ref_psia = 14.696
+        H_vshift_Btu = -c_mix * (psia - P_ref_psia) / CONSTS.FT3_PSIA_TO_BTU
+        H_total_Btu = H_IG_Btu + H_dep_Btu + H_vshift_Btu - H0
 
         def Hdep_deriv(T, z, dzdT):
             """
@@ -454,8 +465,11 @@ def pr_properties(
 
         Cp_total_Btu = Cp_IG + Hdep_deriv(degR, z_eos, dz_dT)
 
-        # Analytic PR volume
+        # Analytic PR volume (untranslated). Cp and Cv are evaluated on the untranslated
+        # EOS deliberately: a constant translation leaves U(T,V) and S(T,p) unchanged, so
+        # both heat capacities are invariant under it. Only V itself is translated.
         V = z_eos * CONSTS.R * degR / psia
+        V_shifted = V - c_mix
         dP_dT_constV = CONSTS.R / (V - b_mix) - da_mix_dT / (V**2 + 2*b_mix*V - b_mix**2)
         dV_dT = (CONSTS.R / psia) * (z_eos + degR * dz_dT)
         den = (V ** 2 + 2 * b_mix * V - b_mix ** 2) ** 2
@@ -463,7 +477,8 @@ def pr_properties(
         Cv_total_Btu = Cp_total_Btu + (degR * dV_dT ** 2 * dP_dV_constT) / CONSTS.FT3_PSIA_TO_BTU
 
         # JT coefficient (R/psia)
-        mu_JT = (degR * dV_dT - V) / (Cp_total_Btu * CONSTS.FT3_PSIA_TO_BTU)
+        # JT uses the translated volume, consistent with the density and enthalpy reported
+        mu_JT = (degR * dV_dT - V_shifted) / (Cp_total_Btu * CONSTS.FT3_PSIA_TO_BTU)
 
         # ----- Verbose Diagnostics -----
         if verbose:

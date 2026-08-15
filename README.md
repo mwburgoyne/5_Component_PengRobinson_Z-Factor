@@ -77,6 +77,15 @@ bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)   # 100% CO2
 
 
 
+## Note on the Excel workbook
+
+`Code Examples/bns_VBA_Module1.bas` is Module1 exported from
+`5-Component Universal EOS.xlsm`, carrying the volume-shift correction to enthalpy and the
+Joule-Thomson coefficient. **The .xlsm itself has not been updated**: patching VBA inside a
+workbook from outside Excel is not safe, because Excel can keep running the cached p-code and
+silently ignore the patched source. To bring the workbook back in line with the Python, Fortran
+and Rust implementations, open it, press Alt+F11, remove Module1, then import the .bas.
+
 ## Additional Resources
 
 Datasets used for these regressions have been uploaded for public access. To replicate these findings, you will need to download and install Aaron Zicks' [PhazeComp](https://www.zicktech.com/phazecomp.html) software, which will run these models with the free functionality. I strongly encourage those interested in deepening their understanding of EOS modelling to invest time in mastering this software.
