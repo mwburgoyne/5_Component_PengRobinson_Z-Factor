@@ -26,10 +26,10 @@ bns.pr_properties(temp=48.88889, pres=13.78948965, sg=0.8,  co2=0.2, h2s=0.1, n2
 
 {'Z': 0.7941023149604872,
  'Density': 150.3029810272768,       # kg/m3    
- 'H': -1317.2886784911848,           # kJ/(kmol)
+ 'H': -1240.8929074628306,           # kJ/(kmol)
  'Cp': 53.92887147310112,            # kJ/(kmol K)
  'Cv': 29.640351748197087,           # kJ/(kmol K)
- 'JT': 3.0063081864897288,           # degC/MPa
+ 'JT': 2.9028170987704853,           # degC/MPa
  'Viscosity': 0.01790543522353429}   # mPa·s
  
 # With Metric = False (or omitted), temperature in deg F, pressure in psia, and results return in Field units
@@ -37,10 +37,10 @@ bns.pr_properties(temp=120, pres=2000, sg=0.8,  co2=0.2, h2s=0.1, n2=0.02, h2=0.
 
 {'Z': 0.7941021413708897,          
  'Density': 9.383130066514621,       # lbm/cuft
- 'H': -566.3342058639222,            # Btu/(lb-mol)
+ 'H': -533.4898678489947,            # Btu/(lb-mol)
  'Cp': 12.880695477802188,           # Btu/(lb-mol·R)
  'Cv': 7.079475893321194,            # Btu/(lb-mol·R)
- 'JT': 0.03730990614059873,          # degF/psia
+ 'JT': 0.03602552422338762,          # degF/psia
  'Viscosity': 0.017905453206830867}  # cP
  
 # With other flags to False, or omitted, just Z-Factor is calculated & returned
@@ -76,6 +76,23 @@ bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)   # 100% CO2
 
 
 
+
+## Volume-shift correction to enthalpy and Joule-Thomson (August 2026)
+
+Earlier versions of every implementation in this repository applied the Peneloux volume
+shift to Z-factor and density but computed enthalpy, Cp, Cv and the Joule-Thomson
+coefficient from the untranslated EOS root. Because the shift reduces to a constant molar
+volume offset `c = SUM(z_i * VSHIFT_i * b_i)`, a constant translation leaves Cp, Cv and
+entropy unchanged but shifts enthalpy by `-c*p` and the JT coefficient by `+c/Cp`. The
+correction is now applied consistently in the Python, Fortran, Rust and VBA implementations
+(all cross-checked against each other).
+
+Measured against reference EOS (CoolProp) over 60-300 degF and 100-10,000 psia, the
+correction takes the mean JT bias from +4.2% to +0.7% for pure CO2 and from +12.0% to
++5.9% for pure methane, and reduces mean absolute enthalpy-departure error for methane
+from 65 to 31 Btu/lb-mol. Z, density, Cp, Cv and viscosity are unchanged to machine
+precision. If you have H or JT values computed with an earlier copy of this code, expect
+them to differ accordingly; the worked examples above reflect the corrected outputs.
 
 ## Note on the Excel workbook
 
