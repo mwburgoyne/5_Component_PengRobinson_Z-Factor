@@ -1,5 +1,10 @@
 ! bns_pr_fixed2.f90 — Fortran Peng–Robinson + Thermo + Viscosity
 ! NOTE: compile as FREE-FORM (.f90) or add compiler flag -ffree-form
+!
+! Components, in fixed order: [CO2, H2S, N2, H2, He, Gas (C1+)]
+! Helium extension (Burgoyne, 2026): He added as a sixth component, all He BIPs zero, no
+! previously fitted parameter changed. NOTE: He uses a deliberately NON-STANDARD Tc of
+! 6.35 degR (NIST 9.35 degR); see the warning above base_props before touching it.
  
 module bns
   use iso_fortran_env,  only: real64
@@ -8,7 +13,7 @@ module bns
   private
   public :: pr_properties
 
-  integer, parameter :: ncomp = 5
+  integer, parameter :: ncomp = 6
   real(real64), parameter :: SQRT2 = 1.4142135623730951_real64
   real(real64), parameter :: PI    = 3.1415926535897932_real64
 
@@ -30,7 +35,7 @@ function clamp_min(x, lo) result(y)
   if (x >= lo) then; y = x; else; y = lo; end if
 end function
 
-function dot5(a, b) result(s)
+function dotc(a, b) result(s)
   real(real64), intent(in) :: a(ncomp), b(ncomp)
   real(real64) :: s
   s = sum(a*b)
@@ -57,19 +62,37 @@ function cube_root(x) result(y)
   end if
 end function
 
+! =============================================================================================
+! !!! HELIUM USES A DELIBERATELY NON-STANDARD CRITICAL TEMPERATURE - THIS IS NOT A TYPO !!!
+!
+! He Tc = 6.35 degR here, versus the NIST/handbook value of 9.35 degR (5.195 K; PhazeComp library 9.342). Do NOT
+! "correct" it. In this model Tc also feeds the Stiel-Thodos dilute-gas viscosity inside LBC,
+! and with the true Tc that term is ~25% low for helium, which no VcVis can repair. At helium's
+! reduced temperatures the density fit is insensitive to Tc (VSHIFT and AF absorb it), so an
+! effective Tc of 6.35 degR was regressed alongside them. Against 29,400 NIST points
+! (60-300 degF, 14.7-14,990 psia):
+!     Tc 6.35 degR : density 0.31% mean / 0.84% max, viscosity  0.70% mean /  3.1% max
+!     Tc 9.34 degR : density 0.32% mean / 0.86% max, viscosity 18.6%  mean / 57%   max
+! H2's custom Tc (47.43 degR vs NIST 59.7 degR) is the same kind of effective constant.
+! The He constants (Tc, AF, VSHIFT, VCVIS) are a set: change one and the others are invalid.
+! He AF is also chosen to keep the PR alpha bracket 1+m(1-sqrt(Tr)) >= 0 up to 500 degF.
+! All He BIPs are zero (only pure helium regressed).
+! =============================================================================================
+! All component properties, by index (CO2, H2S, N2, H2, He, Gas)
 subroutine base_props(mws, tcs, pcs, acf, vshift, omega_a, omega_b, vcvis, cp_poly)
   real(real64), intent(out) :: mws(ncomp), tcs(ncomp), pcs(ncomp), acf(ncomp), vshift(ncomp)
   real(real64), intent(out) :: omega_a(ncomp), omega_b(ncomp), vcvis(ncomp)
   real(real64), intent(out) :: cp_poly(ncomp,5)
 
-  mws  = [44.01_real64, 34.082_real64, 28.014_real64,  2.016_real64,  0.0_real64]
-  tcs  = [547.416_real64, 672.120_real64, 227.160_real64, 47.430_real64, 1.0_real64]
-  pcs  = [1069.51_real64, 1299.97_real64, 492.84_real64,  187.53_real64, 1.0_real64]
-  acf  = [0.12253_real64, 0.04909_real64, 0.037_real64,  -0.217_real64, -0.03899_real64]
-  vshift = [-0.27607_real64, -0.22901_real64, -0.21066_real64, -0.36270_real64, -0.19076_real64]
-  omega_a = [0.427671_real64, 0.436725_real64, 0.457236_real64, 0.457236_real64, 0.457236_real64]
-  omega_b = [0.0696397_real64,0.0724345_real64,0.0777961_real64,0.0777961_real64,0.0777961_real64]
-  vcvis = [1.46352_real64, 1.46808_real64, 1.35526_real64, 0.68473_real64, 1.44383_real64]
+  ! He Tc 6.35 degR is a DELIBERATE non-standard value (see above); He values Burgoyne, 2026
+  mws  = [44.01_real64, 34.082_real64, 28.014_real64,  2.016_real64,  4.003_real64,  0.0_real64]
+  tcs  = [547.416_real64, 672.120_real64, 227.160_real64, 47.430_real64, 6.350_real64, 1.0_real64]
+  pcs  = [1069.51_real64, 1299.97_real64, 492.84_real64,  187.53_real64, 32.9236_real64, 1.0_real64]
+  acf  = [0.12253_real64, 0.04909_real64, 0.037_real64,  -0.217_real64, -0.17984_real64, -0.03899_real64]
+  vshift = [-0.27607_real64, -0.22901_real64, -0.21066_real64, -0.36270_real64, -0.078082_real64, -0.19076_real64]
+  omega_a = [0.427671_real64, 0.436725_real64, 0.457236_real64, 0.457236_real64, 0.457236_real64, 0.457236_real64]
+  omega_b = [0.0696397_real64,0.0724345_real64,0.0777961_real64,0.0777961_real64,0.0777961_real64,0.0777961_real64]
+  vcvis = [1.46352_real64, 1.46808_real64, 1.35526_real64, 0.68473_real64, 0.76778_real64, 1.44383_real64]
 
   cp_poly(1,:) = [2.725473196_real64,  0.004103751_real64,  1.5602e-05_real64, &
                    -4.19321e-08_real64,  3.10542e-11_real64]
@@ -79,7 +102,10 @@ subroutine base_props(mws, tcs, pcs, acf, vshift, omega_a, omega_b, vcvis, cp_po
                     8.4252e-09_real64, -4.38083e-12_real64]
   cp_poly(4,:) = [1.421468418_real64,  0.018192108_real64, -6.04285e-05_real64, &
                     9.08033e-08_real64, -5.18972e-11_real64]
-  cp_poly(5,:) = [5.369051342_real64, -0.014851371_real64,  4.86358e-05_real64, &
+  ! He: monatomic ideal gas, Cp/R = 5/2 exactly
+  cp_poly(5,:) = [2.5_real64, 0.0_real64, 0.0_real64, 0.0_real64, 0.0_real64]
+  ! Gas (C1+), methane base row
+  cp_poly(6,:) = [5.369051342_real64, -0.014851371_real64,  4.86358e-05_real64, &
                    -3.70187e-08_real64,  1.80641e-12_real64]
 end subroutine
 
@@ -121,21 +147,22 @@ subroutine update_hydrocarbon(mws, tcs, pcs, vcvis, sg_hc, ag)
   real(real64) :: tpc, ppc, hc_mw
   call pseudo_critical(sg_hc, ag, tpc, ppc)
   hc_mw = sg_hc * MW_AIR
-  tcs(5) = tpc; pcs(5) = ppc; mws(5) = hc_mw
-  vcvis(5) = 0.0576710_real64 * (hc_mw - mwCH4) + 1.44383_real64
+  tcs(ncomp) = tpc; pcs(ncomp) = ppc; mws(ncomp) = hc_mw
+  vcvis(ncomp) = 0.0576710_real64 * (hc_mw - mwCH4) + 1.44383_real64
 end subroutine
 
-subroutine get_z_fractions(co2, h2s, n2, h2, zf)
-  real(real64), intent(in)  :: co2, h2s, n2, h2
+subroutine get_z_fractions(co2, h2s, n2, h2, he, zf)
+  ! Mole fractions in fixed order [CO2, H2S, N2, H2, He, Gas]; Gas = 1 - all others
+  real(real64), intent(in)  :: co2, h2s, n2, h2, he
   real(real64), intent(out) :: zf(ncomp)
-  zf = [co2, h2s, n2, h2, 1.0_real64 - (co2+h2s+n2+h2)]
+  zf = [co2, h2s, n2, h2, he, 1.0_real64 - (co2+h2s+n2+h2+he)]
 end subroutine
 
 function hydrocarbon_sg(sg_bulk, zf, mws) result(sg_hc)
   real(real64), intent(in) :: sg_bulk, zf(ncomp), mws(ncomp)
   real(real64) :: sg_hc, frac_hc, sum_nonhc
-  frac_hc = zf(5)
-  sum_nonhc = zf(1)*mws(1) + zf(2)*mws(2) + zf(3)*mws(3) + zf(4)*mws(4)
+  frac_hc = zf(ncomp)
+  sum_nonhc = zf(1)*mws(1) + zf(2)*mws(2) + zf(3)*mws(3) + zf(4)*mws(4) + zf(5)*mws(5)
   if (frac_hc > 0.0_real64) then
     sg_hc = (sg_bulk - sum_nonhc/MW_AIR)/frac_hc
   else
@@ -228,13 +255,13 @@ contains
     real(real64), intent(in) :: tpc
     real(real64), intent(out) :: c, s, tc
     c=0.0_real64; s=0.0_real64; tc=1.0_real64
-    if ((i==5 .and. j==1) .or. (i==1 .and. j==5)) then
+    if ((i==6 .and. j==1) .or. (i==1 .and. j==6)) then
       c=-0.145561_real64; s=0.276572_real64; tc=tpc
-    else if ((i==5 .and. j==2) .or. (i==2 .and. j==5)) then
+    else if ((i==6 .and. j==2) .or. (i==2 .and. j==6)) then
       c= 0.16852_real64;  s=-0.122378_real64; tc=tpc
-    else if ((i==5 .and. j==3) .or. (i==3 .and. j==5)) then
+    else if ((i==6 .and. j==3) .or. (i==3 .and. j==6)) then
       c=-0.108_real64;    s= 0.0605506_real64; tc=tpc
-    else if ((i==5 .and. j==4) .or. (i==4 .and. j==5)) then
+    else if ((i==6 .and. j==4) .or. (i==4 .and. j==6)) then
       c=-0.0620119_real64;s= 0.0427873_real64; tc=tpc
     else if ((i==1 .and. j==2) .or. (i==2 .and. j==1)) then
       c= 0.248638_real64; s=-0.138185_real64; tc=547.416_real64
@@ -249,6 +276,7 @@ contains
     else if ((i==3 .and. j==4) .or. (i==4 .and. j==3)) then
       c=-0.166253_real64; s= 0.0788129_real64;tc=227.16_real64
     end if
+    ! Helium (index 5): all BIPs zero (only pure helium regressed); falls through to c=s=0
   end subroutine
 end subroutine
 
@@ -284,13 +312,14 @@ subroutine methane_adjust(cp_poly, hc_mw, out_poly)
   x = hc_mw - mwCH4
   do k=1,5
     scale = a0(k)*x*x + a1(k)*x + 1.0_real64
-    out_poly(5,k) = cp_poly(5,k) * scale
+    out_poly(ncomp,k) = cp_poly(ncomp,k) * scale  ! Only for 'Gas'
   end do
 end subroutine
 
-function lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag) result(mu_mix)
+function lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag, he) result(mu_mix)
   real(real64), intent(in) :: z, degF, psia, sg, co2, h2s, n2, h2
   logical,      intent(in) :: ag
+  real(real64), intent(in) :: he
   real(real64) :: mu_mix
   real(real64) :: zf(ncomp), mws(ncomp), tcs(ncomp), pcs(ncomp), acf(ncomp), vshift(ncomp)
   real(real64) :: omega_a(ncomp), omega_b(ncomp), vcvis(ncomp), cp_poly(ncomp,5)
@@ -300,7 +329,7 @@ function lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag) result(mu_mix)
   integer :: i
 
   call base_props(mws,tcs,pcs,acf,vshift,omega_a,omega_b,vcvis,cp_poly)
-  call get_z_fractions(co2,h2s,n2,h2, zf)
+  call get_z_fractions(co2,h2s,n2,h2,he, zf)
 
   sg_hc = hydrocarbon_sg(sg, zf, mws)
   sg_hc = clamp_min(sg_hc, mwCH4/MW_AIR)
@@ -317,16 +346,16 @@ function lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag) result(mu_mix)
   denom     = sum( zf * sqrt_mw )
   mu_mix    = numerator / denom
 
-  rhoc = 1.0_real64 / dot5(vcvis, zf)
+  rhoc = 1.0_real64 / dotc(vcvis, zf)
   gasdens = psia / (z * Rgas * tR)
   rhor = gasdens / rhoc
 
   a = [0.1023_real64, 0.023364_real64, 0.058533_real64, -0.0392852_real64, 0.00926279_real64]
   lhs = a(1) + a(2)*rhor + a(3)*rhor**2 + a(4)*rhor**3 + a(5)*rhor**4
 
-  tc_mix_k = dot5(tcs, zf) * (5.0_real64/9.0_real64)
-  pc_mix_atm = dot5(pcs, zf) / 14.696_real64
-  mw_mix = dot5(mws, zf)
+  tc_mix_k = dotc(tcs, zf) * (5.0_real64/9.0_real64)
+  pc_mix_atm = dotc(pcs, zf) / 14.696_real64
+  mw_mix = dotc(mws, zf)
   eta_mix = tc_mix_k**(1.0_real64/6.0_real64) / (sqrt(mw_mix) * pc_mix_atm**(2.0_real64/3.0_real64))
 
   mu_mix = (lhs**4 - 1.0e-4_real64)/eta_mix + mu_mix
@@ -334,11 +363,12 @@ end function
 
 subroutine pr_properties( &
     temp, pres, sg, co2, h2s, n2, h2, &
-    ag, viscosity, density, thermo, metric, verbose, &
+    ag, he, viscosity, density, thermo, metric, verbose, &
     z, rho_out, h_out, cp_out, cv_out, jt_out, mu_out)
 
   real(real64), intent(in)  :: temp, pres, sg, co2, h2s, n2, h2
   logical,      intent(in)  :: ag, viscosity, density, thermo, metric, verbose
+  real(real64), intent(in)  :: he   ! He mole fraction (follows ag, as in bns.py)
   real(real64), intent(out) :: z, rho_out, h_out, cp_out, cv_out, jt_out, mu_out
 
   real(real64) :: zf(ncomp), mws(ncomp), tcs(ncomp), pcs(ncomp), acf(ncomp), vshift(ncomp)
@@ -361,7 +391,7 @@ subroutine pr_properties( &
   real(real64), parameter :: P_REF_PSIA = 14.696_real64
   integer :: i, j
 
-  if (co2 + h2s + n2 + h2 > 1.0_real64 + 1.0e-12_real64) then
+  if (co2 + h2s + n2 + h2 + he > 1.0_real64 + 1.0e-12_real64) then
     z = 1.0_real64; rho_out=0.0_real64; h_out=0.0_real64
     cp_out=0.0_real64; cv_out=0.0_real64; jt_out=0.0_real64; mu_out=0.0_real64
     return
@@ -377,7 +407,7 @@ subroutine pr_properties( &
   degR = degF + DEG_F_TO_R
 
   call base_props(mws,tcs,pcs,acf,vshift,omega_a,omega_b,vcvis,cp_poly0)
-  call get_z_fractions(co2,h2s,n2,h2, zf)
+  call get_z_fractions(co2,h2s,n2,h2,he, zf)
 
   sg_hc = hydrocarbon_sg(sg, zf, mws)
   sg_hc = clamp_min(sg_hc, mwCH4/MW_AIR)
@@ -394,7 +424,8 @@ subroutine pr_properties( &
     b_i(i)   = omega_b(i) * Rgas * tcs(i) / pcs(i)
   end do
 
-  call calc_bips(degR, TcCH4, kij, dkij, d2kij)
+  ! BIPs use the hydrocarbon pseudo-critical Tc (AG-dependent), as in the regression (see CHANGELOG, October 2026)
+  call calc_bips(degR, tcs(ncomp), kij, dkij, d2kij)
 
   a_mix = 0.0_real64
   do i=1,ncomp
@@ -402,7 +433,7 @@ subroutine pr_properties( &
       a_mix = a_mix + zf(i)*zf(j)*sqrt(a_i(i)*a_i(j))*(1.0_real64 - kij(i,j))
     end do
   end do
-  b_mix = dot5(b_i, zf)
+  b_mix = dotc(b_i, zf)
 
   rt   = Rgas * degR
   a_dim = a_mix * psia / (rt*rt)
@@ -427,7 +458,7 @@ subroutine pr_properties( &
   end do
   z = z_eos - shift
 
-  mwt = dot5(mws, zf)
+  mwt = dotc(mws, zf)
   rho_out = 0.0_real64
   if (density) rho_out = mwt * psia / (z * Rgas * degR)
 
@@ -474,7 +505,7 @@ subroutine pr_properties( &
     call methane_adjust(cp_poly0, hc_mw, cp_poly)
     t_k = degR * (5.0_real64/9.0_real64)
     do i=1,ncomp; cp_vals(i) = poly5_eval(cp_poly(i,:), t_k); end do
-    cp_ig = dot5(cp_vals, zf) * Rthermo
+    cp_ig = dotc(cp_vals, zf) * Rthermo
 
     bdim = (b_mix * psia) / (Rgas * degR)
     h_dep_ft3psia = Rgas*degR*(z_eos - 1.0_real64) + &
@@ -482,9 +513,9 @@ subroutine pr_properties( &
                     log( (z_eos + (SQRT2+1.0_real64)*bdim) / (z_eos - (SQRT2-1.0_real64)*bdim) )
     h_dep_btu = h_dep_ft3psia / FT3PSIA_TO_BTU
 
-    h0 = [-16.6022_real64, -21.5512_real64, -3.57757_real64, 0.008054_real64, 0.0_real64]
-    h0(5) = -0.015774_real64*(hc_mw - mwCH4)**2 - 0.646645_real64*(hc_mw - mwCH4) - 8.2551915_real64
-    h0_mix = dot5(h0, zf)
+    h0 = [-16.6022_real64, -21.5512_real64, -3.57757_real64, 0.008054_real64, 0.425547_real64, 0.0_real64]
+    h0(ncomp) = -0.015774_real64*(hc_mw - mwCH4)**2 - 0.646645_real64*(hc_mw - mwCH4) - 8.2551915_real64
+    h0_mix = dotc(h0, zf)
 
     t_ref_k = (60.0_real64 + DEG_F_TO_R) * (5.0_real64/9.0_real64)
     h_ig_btu = 0.0_real64
@@ -534,7 +565,7 @@ subroutine pr_properties( &
   end if
 
   mu_out = 0.0_real64
-  if (viscosity) mu_out = lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag)
+  if (viscosity) mu_out = lbc_viscosity(z, degF, psia, sg, co2, h2s, n2, h2, ag, he)
 
   if (metric) then
     if (density) rho_out = rho_out * 16.01846337396_real64
@@ -557,7 +588,7 @@ program demo
 
   call pr_properties( 100.0_real64, 1500.0_real64, 0.65_real64, &
                       0.05_real64, 0.0_real64, 0.02_real64, 0.0_real64, &
-                      .false., &
+                      .false., 0.0_real64, &
                       .true., .true., .true., .false., .false., &
                       z, rho, h, cp, cv, jt, mu)
 

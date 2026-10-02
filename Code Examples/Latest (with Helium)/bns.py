@@ -353,7 +353,8 @@ def pr_properties(
     mws, tcs, pcs, ACF, VSHIFT, OmegaA, OmegaB, VCVIS = (props[k] for k in ('mws','tcs','pcs','ACF','VSHIFT','OmegaA','OmegaB','VCVIS'))
     mws[-1] = hc_mw
     degR = degF + CONSTS.DEG_F_TO_R
-    tpc_hc, _ = pseudo_critical(sg_hc)
+    # BIPs use the same AG-dependent hydrocarbon Tc as the EOS, as in the regression (see CHANGELOG, October 2026)
+    tpc_hc, _ = pseudo_critical(sg_hc, AG)
     trs = degR / tcs
     prs = psia / pcs
     kij, dkij_dT, d2kij_dT2 = calc_bips(degR, tpc_hc)

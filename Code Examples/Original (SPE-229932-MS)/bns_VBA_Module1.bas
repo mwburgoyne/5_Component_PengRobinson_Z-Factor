@@ -1,16 +1,6 @@
-' bns_VBA_Module1.bas
-'
-' Module1 exported from '5-Component Universal EOS.xlsm', with the Peneloux volume
-' shift carried into the caloric path (see the c_mix, H_vshift_Btu and V_shifted
-' additions below). Exported so the VBA is reviewable and diffable in git rather
-' than living only inside the workbook binary.
-'
-' This file and the workbook are in step as of 15 August 2026. Excel owns the copy
-' inside the .xlsm, so keep them in step by hand: edit in the VBE, then export
-' Module1 over this file. Patching the workbook from outside Excel is not safe,
-' because Excel can keep running the cached p-code and ignore patched source.
-'
 Attribute VB_Name = "Module1"
+' Module1 extracted from '5-Component Universal EOS.xlsm' as published with SPE-229932-MS
+' (repository state of 7 November 2025), for reading and diffing. The workbook carries the same code.
 Option Explicit
 '===================================================================
 ' Purpose: Computes Peng–Robinson Z, thermo properties (H, Cp, Cv, mu_JT),
@@ -775,17 +765,6 @@ Public Function BNS_Full( _
     Next i
     Dim z_vshift As Double
     z_vshift = z_eos - sum_zVBi
-
-    ' Peneloux translation as a constant molar volume offset (ft3/lb-mol):
-    '   V_shifted = V_eos - c_mix,  c_mix = SUM(zf * VSHIFT * b_i)
-    ' The p/T dependence in Bi cancels against RT/p exactly, so c_mix is constant.
-    ' A constant translation leaves Cp, Cv and entropy unchanged, but shifts
-    ' enthalpy by -c_mix*p and the JT coefficient by +c_mix/Cp.
-    Dim c_mix As Double
-    c_mix = 0#
-    For i = 1 To 5
-        c_mix = c_mix + zf(i) * VSHIFT(i) * b_i(i)
-    Next i
     
     'Debug.Print "Adding Z", z_vshift
     dict.Add "Z", z_vshift
@@ -919,15 +898,8 @@ Public Function BNS_Full( _
         H0 = -16.6022 * zf(1) + -21.5512 * zf(2) + -3.57757 * zf(3) + 0.008054 * zf(4) + H0_hc * zf(5) ' Sumproduct of Pure component Enthalpy at 60 degF and 14.696 psia
         'H0 = 0
         
-        ' Volume-shift contribution to enthalpy: H_shifted = H_eos - c_mix*p.
-        ' H is reported relative to 60 degF and 14.696 psia, so the reference
-        ' pressure term cancels and the H0 constants above stay valid unchanged.
-        Const P_REF_PSIA As Double = 14.696
-        Dim H_vshift_Btu As Double
-        H_vshift_Btu = -c_mix * (psia - P_REF_PSIA) / FT3_PSIA_TO_BTU
-
         Dim H_total_Btu As Double
-        H_total_Btu = H_IG_Btu + H_dep_Btu + H_vshift_Btu - H0
+        H_total_Btu = H_IG_Btu + H_dep_Btu - H0
 
 
         ' (j) Cp_total = Cp_IG + dH_dep/dT
@@ -937,14 +909,9 @@ Public Function BNS_Full( _
         Cp_total_Btu = Cp_IG_Btu + dH_dep_dT
 
 
-        ' (k) Molar volume V = z_eos·R·T / p, untranslated, plus the translated
-        '     volume. Cp and Cv are evaluated on the untranslated EOS deliberately:
-        '     a constant translation leaves U(T,V) and S(T,p) unchanged, so both
-        '     heat capacities are invariant under it. Only V itself is translated.
+        ' (k) Molar volume V = z_eos·R·T / p
         Dim V As Double
         V = z_eos * R_field * degR / psia
-        Dim V_shifted As Double
-        V_shifted = V - c_mix
 
         ' (l) dP/dT at constant V
         Dim dP_dT_constV As Double
@@ -971,11 +938,9 @@ Public Function BNS_Full( _
         Cv_total_Btu = Cp_total_Btu + (degR * dV_dT ^ 2 * dP_dV_constT) / FT3_PSIA_TO_BTU
 
 
-        ' (o) mu_JT = (T·dV/dT – V_shifted)/(Cp_total * FT3_PSIA_TO_BTU)
-        '     Uses the translated volume, consistent with the density and the
-        '     enthalpy the model reports.
+        ' (o) mu_JT = (T·dV/dT – V)/(Cp_total * FT3_PSIA_TO_BTU)
         Dim mu_JT As Double
-        mu_JT = (degR * dV_dT - V_shifted) / (Cp_total_Btu * FT3_PSIA_TO_BTU)
+        mu_JT = (degR * dV_dT - V) / (Cp_total_Btu * FT3_PSIA_TO_BTU)
 
         'Debug.Print "Adding H", H_total_Btu
         dict.Add "H", H_total_Btu
@@ -1378,3 +1343,4 @@ End Function
 
 
 
+-------------------------------------------------------------------------------

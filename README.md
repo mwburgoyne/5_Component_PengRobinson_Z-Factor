@@ -2,9 +2,18 @@
 
 **Author**: Mark Burgoyne  
 **First released**: 05-04-2024  
-**Most recent update**: 13-08-2025
+**Most recent update**: 03-10-2026 (helium added; see [CHANGELOG.md](CHANGELOG.md))
 
-Example implementations in Python and Excel VBA of method outlined in ADIPEC 2025 paper, SPE-229932-MS
+Example implementations in Python, Excel VBA, Rust and Fortran of the method outlined in ADIPEC 2025 paper, SPE-229932-MS, and of its later extensions.
+
+## Original and Latest
+
+`Code Examples/` holds two versions of every implementation:
+
+- **`Original (SPE-229932-MS)/`**: the five-component model exactly as described in the paper (the repository on 7 November 2025). Use it to reproduce the paper.
+- **`Latest (with Helium)/`**: the current model. It adds helium as a sixth component, applies the volume shift to enthalpy and the Joule-Thomson coefficient (August 2026), and corrects implementation defects that made the four languages disagree with each other and with the regression (October 2026). **Results from `Latest` therefore differ from `Original` even without helium**: enthalpy and JT in every language (by 5.8% and 3.4% in the field-units worked example below), and Z, density and viscosity for associated gas with inerts in Python, for gases with inerts in Fortran, and slightly in VBA. Python, Rust and Fortran in `Latest` agree to 1e-12.
+
+Every change since the paper, with its effect on the numbers, is listed in [CHANGELOG.md](CHANGELOG.md).
 
 **Paper Abstract:** Accurate estimation of gas compressibility (Z-Factor), viscosity, and enthalpy is vital across conventional hydrocarbon production, greenhouse gas storage, and hydrogen energy applications. Legacy Z-factor correlations like Dranchuk-Abou-Kassem (DAK) and Hall-Yarborough (HY) perform well for typical natural gases but lose accuracy - and sometimes fail - at low temperatures, high pressures, or with inert-rich mixtures. Advanced frameworks such as GERG2008 address a broader range of compositions but are often impractical for spreadsheets and standard engineering workflows due to software, complexity, and compositional constraints.
 
@@ -18,6 +27,9 @@ Calculations, regression data, and example implementations in Python and Excel V
 
 
 ## Example usage
+
+The examples use `Code Examples/Latest (with Helium)/bns.py`.
+
 ```python
 import bns as bns
 
@@ -53,27 +65,11 @@ bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)   # 100% CO2
 
 ```
 
-## Helium extension (October 2026)
+## Helium (October 2026)
 
-> **⚠ Helium uses a deliberately non-standard critical temperature: Tc = 6.35 °R, not the NIST 9.35 °R (5.195 K). This is not a typo. Do not "correct" it.** The helium constants (Tc, AF, VSHIFT, VcVis) were regressed together and only work as a set.
+> **⚠ Helium uses a deliberately non-standard critical temperature: Tc = 6.35 °R, not the NIST 9.35 °R (5.195 K). This is not a typo. Do not "correct" it.** In this model Tc also sets the Stiel-Thodos dilute-gas viscosity inside LBC, which is about 25% low for helium at the true Tc; the density fit is insensitive to Tc. The helium Tc, acentric factor, volume shift and VcVis were regressed together and only work as a set.
 
-`bns.py` now accepts `he=` (mole fraction) alongside `co2`, `h2s`, `n2` and `h2`. Helium is a sixth component with all helium BIPs set to zero; only pure-helium properties were regressed, and no previously fitted parameter was changed. With `he=0` every output is identical to the five-component version (320 reference cases across composition, 50-300 °F and 14.7-15,000 psia agree to 5e-15 relative). Only the Python implementation carries helium so far; the VBA, workbook, Rust and Fortran versions do not yet.
-
-Why the non-standard Tc: in this model Tc also sets the Stiel-Thodos dilute-gas viscosity inside LBC. With the true Tc that term is about 25% low for helium (N2 −1.9%, CO2 −0.1%), and VcVis cannot repair it because LBC collapses to the dilute term at low density. At helium's reduced temperatures the density fit is insensitive to Tc (VSHIFT and AF absorb it), so an effective Tc was regressed with them, as the custom H2 Tc (47.43 °R against NIST 59.7 °R) was earlier.
-
-| Helium constants | MW | Tc (°R) | Pc (psia) | AF | VSHIFT | Ω_A, Ω_B | VcVis (ft³/lb-mol) |
-|---|---|---|---|---|---|---|---|
-| | 4.003 | **6.35 (non-standard)** | 32.9236 | −0.17984 | −0.078082 | PR defaults | 0.76778 |
-
-Accuracy against 29,400 NIST WebBook points for pure helium (49 isotherms 60-300 °F, 14.7-14,990 psia), mean / max absolute error:
-
-| | Tc 6.35 °R (used) | Tc 9.34 °R (standard) |
-|---|---|---|
-| Density | 0.31% / 0.84% | 0.32% / 0.86% |
-| Viscosity | 0.70% / 3.1% | 18.6% / 57% |
-| Cp | 0.23% / 0.60% | |
-
-Thermal outputs were not fitted (as for the other components). Against NIST the pressure dependence of enthalpy is about 13% low (H at 60 °F, 14,990 psia: 475 against 543 Btu/lb-mol relative to 60 °F and 14.7 psia), and the JT coefficient is 7-19% low in magnitude. The AF value also keeps the PR alpha term well-behaved (1 + m(1 − √Tr) ≥ 0) up to 500 °F; above that, helium results are an extrapolation.
+Every implementation in `Latest` takes a helium mole fraction as a new last argument (`he`), with all helium BIPs zero. Against 29,400 NIST points for pure helium (60-300 °F, 14.7-14,990 psia) the model reproduces density to 0.31% mean / 0.84% max and viscosity to 0.70% / 3.1%. Constants, basis, accuracy and limitations are in [CHANGELOG.md](CHANGELOG.md).
 
 ```python
 bns.pr_properties(temp=150, pres=3000, sg=0.70, he=0.05, co2=0.03, n2=0.10, viscosity=True, density=True)
@@ -99,37 +95,21 @@ bns.pr_properties(temp=150, pres=3000, sg=0.70, he=0.05, co2=0.03, n2=0.10, visc
   - Pure NIST viscosities from each of the inerts and methane were used, along with synthetic natural gas viscosities using the Lee Gonzalez and Eakin correlation over the range of 0.6 - 2.0 SG, 14.7 - 5,000 psia and 60 - 300 degF
 - **Ideal gas heat capacity**
   - Pure NIST heat capacities at zero pressure were used to (re)fit Cp_ig with Riazi's polynomial form. There was no additional tuning to match thermal results, simply applying accepted departure cubic EOS model calculations leveraging our EOS model.
+- **Helium (Latest only)**
+  - NIST WebBook densities and viscosities for pure helium, 49 isotherms at 60-300 °F and 14.7-14,990 psia (29,400 points); PhazeComp decks and inputs in `Data/06 - Helium EOS and VcVis Regression.zip`.
 
 
 
 
 ## Volume-shift correction to enthalpy and Joule-Thomson (August 2026)
 
-Earlier versions of every implementation in this repository applied the Peneloux volume
-shift to Z-factor and density but computed enthalpy, Cp, Cv and the Joule-Thomson
-coefficient from the untranslated EOS root. Because the shift reduces to a constant molar
-volume offset `c = SUM(z_i * VSHIFT_i * b_i)`, a constant translation leaves Cp, Cv and
-entropy unchanged but shifts enthalpy by `-c*p` and the JT coefficient by `+c/Cp`. The
-correction is now applied consistently in the Python, Fortran, Rust and VBA implementations
-(all cross-checked against each other).
-
-Measured against reference EOS (CoolProp) over 60-300 degF and 100-10,000 psia, the
-correction takes the mean JT bias from +4.2% to +0.7% for pure CO2 and from +12.0% to
-+5.9% for pure methane, and reduces mean absolute enthalpy-departure error for methane
-from 65 to 31 Btu/lb-mol. Z, density, Cp, Cv and viscosity are unchanged to machine
-precision. If you have H or JT values computed with an earlier copy of this code, expect
-them to differ accordingly; the worked examples above reflect the corrected outputs.
+The paper's implementations applied the volume shift to Z-factor and density but not to enthalpy and the Joule-Thomson coefficient. `Latest` corrects this: enthalpy shifts by `−c·(p − 14.696)` and JT by `+c/Cp`, with `c = SUM(z_i * VSHIFT_i * b_i)`, while Z, density, Cp, Cv and viscosity are unchanged. If you have H or JT values from the `Original` code or any earlier copy, expect them to differ. Details and measured effect: [CHANGELOG.md](CHANGELOG.md).
 
 ## Note on the Excel workbook
 
-`Code Examples/bns_VBA_Module1.bas` is Module1 exported from
-`5-Component Universal EOS.xlsm`. The workbook and the .bas are in step, and both carry the
-volume-shift correction to enthalpy and the Joule-Thomson coefficient, matching the Python,
-Fortran and Rust implementations.
+`Original (SPE-229932-MS)/` contains the workbook `5-Component Universal EOS.xlsm` as published, with its Module1 also exported as `bns_VBA_Module1.bas` for reading and diffing.
 
-Keep them in step by hand. Excel owns the copy inside the workbook, so edit the VBA in the VBE,
-then export Module1 over the .bas; patching the workbook from outside Excel is not safe, because
-Excel can keep running the cached p-code and silently ignore patched source.
+`Latest (with Helium)/` contains the updated module, `bns_VBA_Module1.bas`, but no workbook: VBA cannot be rewritten safely from outside Excel, because Excel can keep running the cached p-code and silently ignore patched source. To build the Latest workbook, open a copy of the Original workbook, press Alt+F11, right-click Module1 and choose Remove Module (no export needed), then File > Import File and select `Latest (with Helium)/bns_VBA_Module1.bas`, and save. The helium argument is optional, so existing worksheet formulas keep working.
 
 ## Additional Resources
 
