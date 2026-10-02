@@ -53,6 +53,32 @@ bns.pr_properties(temp=60, pres=2000, sg=0.75,  co2=1.0)   # 100% CO2
 
 ```
 
+## Helium extension (October 2026)
+
+> **⚠ Helium uses a deliberately non-standard critical temperature: Tc = 6.35 °R, not the NIST 9.35 °R (5.195 K). This is not a typo. Do not "correct" it.** The helium constants (Tc, AF, VSHIFT, VcVis) were regressed together and only work as a set.
+
+`bns.py` now accepts `he=` (mole fraction) alongside `co2`, `h2s`, `n2` and `h2`. Helium is a sixth component with all helium BIPs set to zero; only pure-helium properties were regressed, and no previously fitted parameter was changed. With `he=0` every output is identical to the five-component version (320 reference cases across composition, 50-300 °F and 14.7-15,000 psia agree to 5e-15 relative). Only the Python implementation carries helium so far; the VBA, workbook, Rust and Fortran versions do not yet.
+
+Why the non-standard Tc: in this model Tc also sets the Stiel-Thodos dilute-gas viscosity inside LBC. With the true Tc that term is about 25% low for helium (N2 −1.9%, CO2 −0.1%), and VcVis cannot repair it because LBC collapses to the dilute term at low density. At helium's reduced temperatures the density fit is insensitive to Tc (VSHIFT and AF absorb it), so an effective Tc was regressed with them, as the custom H2 Tc (47.43 °R against NIST 59.7 °R) was earlier.
+
+| Helium constants | MW | Tc (°R) | Pc (psia) | AF | VSHIFT | Ω_A, Ω_B | VcVis (ft³/lb-mol) |
+|---|---|---|---|---|---|---|---|
+| | 4.003 | **6.35 (non-standard)** | 32.9236 | −0.17984 | −0.078082 | PR defaults | 0.76778 |
+
+Accuracy against 29,400 NIST WebBook points for pure helium (49 isotherms 60-300 °F, 14.7-14,990 psia), mean / max absolute error:
+
+| | Tc 6.35 °R (used) | Tc 9.34 °R (standard) |
+|---|---|---|
+| Density | 0.31% / 0.84% | 0.32% / 0.86% |
+| Viscosity | 0.70% / 3.1% | 18.6% / 57% |
+| Cp | 0.23% / 0.60% | |
+
+Thermal outputs were not fitted (as for the other components). Against NIST the pressure dependence of enthalpy is about 13% low (H at 60 °F, 14,990 psia: 475 against 543 Btu/lb-mol relative to 60 °F and 14.7 psia), and the JT coefficient is 7-19% low in magnitude. The AF value also keeps the PR alpha term well-behaved (1 + m(1 − √Tr) ≥ 0) up to 500 °F; above that, helium results are an extrapolation.
+
+```python
+bns.pr_properties(temp=150, pres=3000, sg=0.70, he=0.05, co2=0.03, n2=0.10, viscosity=True, density=True)
+```
+
 ## Evolution of work
 - Original Single component PR EOS model for hydrocarbon gas in reduced temperature and pressure space (per [Linkedin post 5th April 2024](https://www.linkedin.com/pulse/z-factors-natural-gas-simple-eos-based-approach-mark-burgoyne-aazrc))
 - Fist update for inerts (per [Linkedin post 27th April 2024](https://www.linkedin.com/pulse/improving-single-component-peng-robinson-z-factor-inerts-burgoyne-zfxcc)) fitted constant BIP's between inert and hydrocarbon pairs.  

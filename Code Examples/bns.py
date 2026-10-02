@@ -3,6 +3,10 @@
 # M. W. Burgoyne, Santos; M. H. Nielsen, Whitson AS; M. Stanko, Whitson AS
 
 # BNS_10.py - Peng-Robinson Z-Factor, Thermodynamic, and Viscosity Properties
+#
+# Helium extension (Burgoyne, 2026): He added as a sixth component, all He BIPs zero, no
+# previously fitted parameter changed. NOTE: He uses a deliberately NON-STANDARD Tc of
+# 6.35 degR (NIST 9.35 degR); see the warning above PROPS before touching it.
 
 import numpy as np
 from typing import Dict, Any
@@ -24,26 +28,42 @@ class Constants:
 CONSTS = Constants()
 
 # Cp polynomial coefficients for components (order: a, b, c, d, e)
-# Each row is a component: [CO2, H2S, N2, H2, Gas (C1+)]
+# Each row is a component: [CO2, H2S, N2, H2, He, Gas (C1+)]
 # Fitted to NIST data at zero psia (Burgoyne, 2025)
 Cp_poly_coeffs = np.array([
     [2.725473196,  0.004103751,  1.5602E-05, -4.19321E-08,  3.10542E-11],  # CO2
     [4.446031265, -0.005296052,  2.0533E-05, -2.58993E-08,  1.25555E-11],  # H2S
     [3.423811591,  0.001007461, -4.58491E-06,  8.4252E-09, -4.38083E-12],  # N2
     [1.421468418,  0.018192108, -6.04285E-05,  9.08033E-08, -5.18972E-11], # H2
+    [2.5,          0.0,          0.0,          0.0,          0.0],          # He (monatomic ideal gas, Cp/R = 5/2 exactly)
     [5.369051342, -0.014851371,  4.86358E-05, -3.70187E-08,  1.80641E-12], # Methane
 ])
 
-# All component properties, by index (CO2, H2S, N2, H2, Gas)
+# =============================================================================================
+# !!! HELIUM USES A DELIBERATELY NON-STANDARD CRITICAL TEMPERATURE - THIS IS NOT A TYPO !!!
+#
+# He Tc = 6.35 degR here, versus the NIST/handbook value of 9.35 degR (5.195 K; PhazeComp library 9.342). Do NOT
+# "correct" it. In this model Tc also feeds the Stiel-Thodos dilute-gas viscosity inside LBC,
+# and with the true Tc that term is ~25% low for helium, which no VcVis can repair. At helium's
+# reduced temperatures the density fit is insensitive to Tc (VSHIFT and AF absorb it), so an
+# effective Tc of 6.35 degR was regressed alongside them. Against 29,400 NIST points
+# (60-300 degF, 14.7-14,990 psia):
+#     Tc 6.35 degR : density 0.31% mean / 0.84% max, viscosity  0.70% mean /  3.1% max
+#     Tc 9.34 degR : density 0.32% mean / 0.86% max, viscosity 18.6%  mean / 57%   max
+# H2's custom Tc (47.43 degR vs NIST 59.7 degR) is the same kind of effective constant.
+# The He constants (Tc, AF, VSHIFT, VCVIS) are a set: change one and the others are invalid.
+# He AF is also chosen to keep the PR alpha bracket 1+m(1-sqrt(Tr)) >= 0 up to 500 degF.
+# =============================================================================================
+# All component properties, by index (CO2, H2S, N2, H2, He, Gas)
 PROPS = {
-    'mws'   : np.array([44.01, 34.082, 28.014, 2.016, 0.0]),
-    'tcs'   : np.array([547.416, 672.120, 227.160, 47.430, 1.0]),                 # Custom Tc for H2 (Neislen, 2023)
-    'pcs'   : np.array([1069.51, 1299.97, 492.84, 187.53, 1.0]),
-    'ACF'   : np.array([0.12253, 0.04909, 0.037, -0.217, -0.03899]),              # Retuned Burgoyne, 2025
-    'VSHIFT': np.array([-0.27607, -0.22901, -0.21066, -0.36270, -0.19076]),       # Retuned Burgoyne, 2025
-    'OmegaA': np.array([0.427671, 0.436725, 0.457236, 0.457236, 0.457236]),       # Retuned CO2 and H2S: Burgoyne, 2025
-    'OmegaB': np.array([0.0696397, 0.0724345, 0.0777961, 0.0777961, 0.0777961]),  # Retuned CO2 and H2S: Burgoyne, 2025
-    'VCVIS' : np.array([1.46352, 1.46808, 1.35526, 0.68473,  0.0]),               # Retuned Burgoyne, 2025
+    'mws'   : np.array([44.01, 34.082, 28.014, 2.016, 4.003, 0.0]),
+    'tcs'   : np.array([547.416, 672.120, 227.160, 47.430, 6.350, 1.0]),          # Custom Tc for H2 (Neislen, 2023); He Tc 6.35 is a DELIBERATE non-standard value (see above)
+    'pcs'   : np.array([1069.51, 1299.97, 492.84, 187.53, 32.9236, 1.0]),
+    'ACF'   : np.array([0.12253, 0.04909, 0.037, -0.217, -0.17984, -0.03899]),    # Retuned Burgoyne, 2025; He Burgoyne, 2026
+    'VSHIFT': np.array([-0.27607, -0.22901, -0.21066, -0.36270, -0.078082, -0.19076]),  # Retuned Burgoyne, 2025; He Burgoyne, 2026
+    'OmegaA': np.array([0.427671, 0.436725, 0.457236, 0.457236, 0.457236, 0.457236]),        # Retuned CO2 and H2S: Burgoyne, 2025
+    'OmegaB': np.array([0.0696397, 0.0724345, 0.0777961, 0.0777961, 0.0777961, 0.0777961]), # Retuned CO2 and H2S: Burgoyne, 2025
+    'VCVIS' : np.array([1.46352, 1.46808, 1.35526, 0.68473, 0.76778, 0.0]),       # Retuned Burgoyne, 2025; He Burgoyne, 2026
     'Cp_poly': Cp_poly_coeffs,
 }
 
@@ -108,13 +128,13 @@ def methane_adjust(cp_coeffs: np.ndarray, hc_mw: float) -> np.ndarray:
     cp_adj[-1, :] *= scale  # Only for 'Gas'
     return cp_adj
 
-def get_z_fractions(co2, h2s, n2, h2) -> np.ndarray:
+def get_z_fractions(co2, h2s, n2, h2, he=0.0) -> np.ndarray:
     """
-    Returns array of mole fractions in fixed order [CO2, H2S, N2, H2, Gas].
+    Returns array of mole fractions in fixed order [CO2, H2S, N2, H2, He, Gas].
     Fraction for 'Gas' is 1 minus all others.
     """
-    frac_hc = 1.0 - (co2 + h2s + n2 + h2)
-    return np.array([co2, h2s, n2, h2, frac_hc])
+    frac_hc = 1.0 - (co2 + h2s + n2 + h2 + he)
+    return np.array([co2, h2s, n2, h2, he, frac_hc])
 
 def hydrocarbon_sg(sg, zf, mws) -> float:
     """
@@ -176,7 +196,7 @@ def calc_bips(degR, tpc_hc):
     - Returns: kij, dkij_dT, d2kij_dT2 (all NxN)
     - Tuned to experimental VLE data Burgoyne, 2025
     """
-    components = ['CO2', 'H2S', 'N2', 'H2', 'Gas']
+    components = ['CO2', 'H2S', 'N2', 'H2', 'He', 'Gas']
     bip_parameters = {
         ("Gas", "CO2"): {"constant": -0.145561 ,  "Tr_slope": 0.276572 ,  "tc": tpc_hc  },
         ("Gas", "H2S"): {"constant": 0.16852   ,  "Tr_slope": -0.122378,  "tc": tpc_hc  },
@@ -188,6 +208,12 @@ def calc_bips(degR, tpc_hc):
         ("H2S", "N2"):  {"constant": -0.204414 ,  "Tr_slope": 0.234417 ,  "tc": 672.12  },
         ("H2S", "H2"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 672.12  },
         ("N2",  "H2"):  {"constant": -0.166253 ,  "Tr_slope": 0.0788129,  "tc": 227.16  },
+        # Helium: all BIPs zero (only pure helium regressed)
+        ("Gas", "He"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 6.35    },
+        ("CO2", "He"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 6.35    },
+        ("H2S", "He"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 6.35    },
+        ("N2",  "He"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 6.35    },
+        ("H2",  "He"):  {"constant": 0         ,  "Tr_slope": 0        ,  "tc": 6.35    },
     }
     def lookup_key(i, j):
         return (i, j) if (i, j) in bip_parameters else (j, i)
@@ -228,12 +254,12 @@ def stiel_thodos_viscosity(t_rankine, molecular_weights, tcs_, pcs_):
     )
     return mu_vals
 
-def lbc_viscosity(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2=0.0, AG=False):
+def lbc_viscosity(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2=0.0, AG=False, he=0.0):
     """
     Computes LBC viscosity (cP) using dilute gas mixing + dense phase polynomial in reduced density.
     - Used by PR property package as a field engineering default.
     """
-    zf = get_z_fractions(co2, h2s, n2, h2)
+    zf = get_z_fractions(co2, h2s, n2, h2, he)
     props = dict(PROPS)
     sg_hc = hydrocarbon_sg(sg, zf, props['mws'])
     sg_hc = max(sg_hc, CONSTS.mwCH4 / CONSTS.MW_AIR)
@@ -264,6 +290,7 @@ def lbc_viscosity(Z, degf, psia, sg, co2=0.0, h2s=0.0, n2=0.0, h2=0.0, AG=False)
 def pr_properties(
     temp: float, pres: float, sg: float,
     co2: float=0.0, h2s: float=0.0, n2: float=0.0, h2: float=0.0, AG: bool=False,
+    he: float=0.0,
     viscosity: bool=False, density: bool=False, thermo: bool=False, Metric: bool=False, verbose: bool=False
     ) -> Dict[str, Any]:
     """
@@ -282,7 +309,7 @@ def pr_properties(
     sg: gas mixture specific gravity relative to air. Used to calculate the hydrocarbon MW
         - If 100% inert mixture, then sg input is ignored
         - If implied hydrocarbon gas sg < methane, then sg input is ignored and hydrocarbon MW set to methane.
-    co2, h2s, n2, h2: Mole fractions of respective inert components of the mixture. Defaults to zero if undefined
+    co2, h2s, n2, h2, he: Mole fractions of respective inert components of the mixture. Defaults to zero if undefined
     AG: Boolean flag that controls the Tc, Pc relationship to use for hydrocarbon pseudocomponent. Defaults to False (for gas condensate). True used for Associated gas
     viscosity: Boolean flag that controls whether viscosity is calculated (default False)
     density: Boolean flag that controls whether density is calculated (default False)
@@ -303,10 +330,10 @@ def pr_properties(
     """
    
 
-    if (co2 + h2s + n2 + h2) > 1.0:
+    if (co2 + h2s + n2 + h2 + he) > 1.0:
         raise ValueError(
-            f"Invalid composition: sum of CO₂({co2}) + H₂S({h2s}) + N₂({n2}) + H₂({h2}) = "
-            f"{co2 + h2s + n2 + h2:.6f} > 1.0"
+            f"Invalid composition: sum of CO₂({co2}) + H₂S({h2s}) + N₂({n2}) + H₂({h2}) + He({he}) = "
+            f"{co2 + h2s + n2 + h2 + he:.6f} > 1.0"
         )    
     
     if Metric:
@@ -317,7 +344,7 @@ def pr_properties(
         psia = pres
         
         
-    zf = get_z_fractions(co2, h2s, n2, h2)
+    zf = get_z_fractions(co2, h2s, n2, h2, he)
     props = dict(PROPS)
     sg_hc = hydrocarbon_sg(sg, zf, props['mws'])
     sg_hc = max(sg_hc, CONSTS.mwCH4 / CONSTS.MW_AIR)
@@ -368,8 +395,8 @@ def pr_properties(
 
         # Mixing rules: analytic da_mix/dT (includes BIP T-derivative terms)
         daij_dT = np.zeros_like(aij)
-        for i in range(5):
-            for j in range(5):
+        for i in range(len(zf)):
+            for j in range(len(zf)):
                 sqrt_ai_aj = np.sqrt(a_i[i] * a_i[j])
                 N = da_i_dT[i] * a_i[j] + a_i[i] * da_i_dT[j]
                 daij_dT[i,j] = -dkij_dT[i,j] * sqrt_ai_aj + (1.0 - kij[i,j]) * 0.5 * (N / sqrt_ai_aj)
@@ -380,8 +407,8 @@ def pr_properties(
         d2alpha_dT2 = d2alpha_dTr2 / (tcs**2)
         d2a_i_dT2 = a_c_i * d2alpha_dT2
         d2aij_dT2 = np.zeros_like(aij)
-        for i in range(5):
-            for j in range(5):
+        for i in range(len(zf)):
+            for j in range(len(zf)):
                 sqrt_ai_aj = np.sqrt(a_i[i] * a_i[j])
                 N = da_i_dT[i] * a_i[j] + a_i[i] * da_i_dT[j]
                 cross_2_da = 2 * da_i_dT[i] * da_i_dT[j]
@@ -413,7 +440,7 @@ def pr_properties(
         # -- Ideal gas Cp (polynomial, componentwise, with MW-adjusted C1+) --
         Cp_poly = methane_adjust(props['Cp_poly'], hc_mw)
         T_K = degR * 5.0 / 9.0
-        Cp_vals = np.array([np.polyval(Cp_poly[i, ::-1], T_K) for i in range(5)])  # Each component's Cp(T)
+        Cp_vals = np.array([np.polyval(Cp_poly[i, ::-1], T_K) for i in range(len(zf))])  # Each component's Cp(T)
         Cp_IG = np.dot(zf, Cp_vals) * CONSTS.R_THERMO
 
         # --- PR departure and analytic property calculations ---
@@ -424,7 +451,7 @@ def pr_properties(
         H_dep_ft3psia = (CONSTS.R * degR * (z_eos - 1) + (degR * da_mix_dT - a_mix) / (2 * sqrt2 * b_mix) * log_term(z_eos))
         H_dep_Btu = H_dep_ft3psia / CONSTS.FT3_PSIA_TO_BTU
         # Empirical reference enthalpy at 60°F for each component - From the results of this function at 60 degF and 14.696 psia (Burgoyne, 2025)
-        H0_ = [-16.6022, -21.5512, -3.57757, 0.008054, 0]
+        H0_ = [-16.6022, -21.5512, -3.57757, 0.008054, 0.425547, 0]
         H0_[-1] = -0.015774 * (hc_mw - CONSTS.mwCH4)**2 - 0.646645 * (hc_mw - CONSTS.mwCH4) - 8.2551915 # Fitted to The results of this function at different HC MW's (Burgoyne, 2025)
         H0 = np.dot(zf, H0_)
         
@@ -523,7 +550,7 @@ def pr_properties(
             "JT": float(mu_JT)
         })
     if viscosity:
-        result['Viscosity'] = float(lbc_viscosity(z_vshift, degF, psia, sg, co2, h2s, n2, h2, AG))
+        result['Viscosity'] = float(lbc_viscosity(z_vshift, degF, psia, sg, co2, h2s, n2, h2, AG, he))
         if verbose:
             print("Viscosity (cP):", result["Viscosity"])
     
