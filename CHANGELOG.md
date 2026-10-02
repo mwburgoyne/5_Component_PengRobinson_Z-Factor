@@ -40,7 +40,7 @@ Thermal outputs were not fitted: against NIST the pressure dependence of helium 
 
 **Effect on existing results: none.** Adding helium did not change any result when helium is zero: 320 reference cases across composition, 50-300 °F, 14.7-15,000 psia and both hydrocarbon correlations reproduce to 5e-15 relative. The implementation corrections above are separate.
 
-**Implementations.** Python, Rust, Fortran and the VBA module agree to 1e-12 (see the entry above). The workbook is `6-Component Universal EOS.xlsx` (helium input, calculator helper, EOS and BIP tables with a helium row), shipped without VBA because VBA cannot be written safely from outside Excel; import `bns_VBA_Module1.bas` and `Dictionary.cls` into it and save as .xlsm (see the README). The same helium model ships in pyResToolbox 3.8.3 (`he=` on the gas functions).
+**Implementations.** Python, Rust, Fortran and the VBA module agree to 1e-12 (see the entry above). The workbook is `6-Component Universal EOS.xlsm` (helium input, calculator helper, EOS and BIP tables with a helium row), with Module1 exported as `bns_VBA_Module1.bas`. Built in Excel, it reproduces `bns.py` at the shipped inputs (Z 0.641878, H −2301.637 kJ/kmol). The same helium model ships in pyResToolbox 3.8.3 (`he=` on the gas functions).
 
 ## August 2026: volume shift carried into enthalpy and the Joule-Thomson coefficient
 

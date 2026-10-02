@@ -109,13 +109,9 @@ The paper's implementations applied the volume shift to Z-factor and density but
 
 `Original (SPE-229932-MS)/` contains the workbook `5-Component Universal EOS.xlsm` as published, with its Module1 also exported as `bns_VBA_Module1.bas` for reading and diffing.
 
-`Latest (with Helium)/` contains `6-Component Universal EOS.xlsx`, the worksheet updated for helium (helium input column, calculator helper, EOS-parameter and BIP tables with a helium row, summary values matching the code), plus the VBA as two files to import: `bns_VBA_Module1.bas` and `Dictionary.cls` (the VBA-tools drop-in for Scripting.Dictionary, needed on Mac). The worksheet ships as .xlsx because VBA cannot be written safely from outside Excel, which can keep running cached p-code and ignore patched source. To make it live:
+`Latest (with Helium)/` contains `6-Component Universal EOS.xlsm`, the workbook updated for helium: a helium input column, a helium row in the calculator helper and in the EOS-parameter and BIP tables, and summary values that match the code. Its Module1 is exported as `bns_VBA_Module1.bas` for reading and diffing; the helium argument is optional and last, so formulas written for the five-component workbook keep working. With the shipped inputs (21.1 °C, 5 MPa, SG 1.5198, 80% CO2, metric) it returns Z 0.641878, viscosity 0.017124 cP, density 140.181 kg/m3 and H −2301.64 kJ/kmol, the same as `bns.py`.
 
-1. Open `6-Component Universal EOS.xlsx` and press Alt+F11.
-2. File > Import File, select `bns_VBA_Module1.bas`; repeat for `Dictionary.cls`. Check that the module is named Module1.
-3. Debug > Compile VBAProject, then save as a macro-enabled workbook (.xlsm).
-
-With the shipped inputs (21.1 °C, 5 MPa, SG 1.5198, 80% CO2, metric) the outputs should read Z 0.641878, viscosity 0.017124 cP, density 140.181 kg/m3, H −2301.64 kJ/kmol. With SG 0.6, 5% N2 and 10% He: Z 0.911592, viscosity 0.012538 cP. The helium argument is optional and last, so formulas written for the five-component workbook keep working.
+In both folders the workbook holds the live VBA. Keep the .bas in step by hand: edit in the VBE, then export Module1 over the .bas. Patching a workbook's VBA from outside Excel is not safe, because Excel can keep running the cached p-code and silently ignore patched source.
 
 ## Additional Resources
 
